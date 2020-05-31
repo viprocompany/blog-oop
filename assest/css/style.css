@@ -1,0 +1,173 @@
+@import url('reset.css');
+
+body {    
+}
+.container {
+  height:auto;
+}
+#hello {
+  background-color:#D6FFFF;
+  padding-top: 5px ;
+  padding-bottom: 5px;
+  color: #330033;
+  font-family: 'Courier New Bold', Monaco, monospace;
+  font-size:  24px;
+  font-style: italic;  
+  text-align: center;
+}
+
+#content{
+ height:auto ;
+ margin-top: 5px;
+ margin-bottom: 5px; 
+}
+#center {
+  background-color:#E9FDFD;
+}
+#sideLeft{
+background-color:#FFFFC6;
+}
+#sideRight{
+ background-color:#FFFFC6;
+}
+
+#downald{
+  padding: 10px;
+}
+#legend{  
+padding: 10px;
+background-color:#D6FFFF;
+}
+
+#downaldButton { 
+  height:60px;
+  width:300px; 
+  cursor:pointer;
+}
+#downaldText{
+padding-top:10px;
+}
+.carousel {
+height:auto !important;
+}
+#carouselHeight{
+	height: auto !important;
+}
+.carousel-indicators li:hover {
+  cursor: pointer;
+}
+.Fade {
+overflow: hidden; 
+}
+#adress {
+  padding:5px;
+  text-align: center;
+}
+<!-- левый блок блок-->
+
+#info, #form {
+height:auto;
+padding-bottom: 10px;
+}
+#reklama{
+height:auto;
+padding-top: 10px;
+}
+
+#mail2 {
+  background: url('../img/mail.png') no-repeat;  
+  width: 50px; 
+  height: 30px;
+  display: block;
+  margin:  10px auto 10px auto;
+}
+
+#vkontakte{
+  background: url('../img/vk.jpg') no-repeat;  
+  width: 50px; 
+  height: 30px;
+  display: block;
+  margin:  10px auto 10px auto;
+}
+#instagram{
+  background: url('../img/instagram.jpg') no-repeat;  
+  width: 50px; 
+  height: 30px;
+  display: block;
+  margin:  10px auto 10px auto;
+}
+#facebook{
+  background: url('../img/facebook.jpg') no-repeat;  
+  width: 50px; 
+  height: 30px;
+  display: block;
+  margin:  10px auto 10px auto;
+}
+div#sideLeft p{
+  text-indent: 10px; 
+  margin:auto;
+}
+#ModalF{
+  margin:10px auto 10px auto;  
+}
+<!-- правый блок-->
+
+.ask {
+  margin-left: 5px;   
+}
+.question {
+}
+div#ask-answer {
+  background: url('../img/ask-answer.png') no-repeat;  
+  width: 50px; 
+  height: 50px;
+  display: block;
+  margin: 10px auto auto auto;
+}
+<!--шрифты-->
+
+div#content p{
+  font-family: 'Courier New Bold', Monaco, monospace;
+  font-size:16px;
+  font-weight:  bold;
+}
+div#downald p{
+  color:#005555;
+  font-family: 'Courier New Bold', Monaco, monospace;
+  font-size: 16px;
+  font-style: italic;
+  font-weight:bold;
+}
+div#sideLeft p{
+  font-size: 12px;
+  font-style: normal;
+}
+div#legend h4 {
+  font-family: 'Courier New Bold', Monaco, monospace;
+  font-size:  16px;
+  font-style: italic;
+  font-weight:  bold;
+  text-align: center;
+  color: #330033;
+} 
+div#sideRight h4 {
+ color: #330033;
+  font-family: 'Courier New Bold', Monaco, monospace;
+  font-size:  20px;
+  font-style: italic;
+  font-weight:  bold;
+  text-align: center; 
+  }  
+      
+div#sideRight p{
+  color: #330033;
+  font-family: 'Courier New Bold', Monaco, monospace;
+  font-size:14px;
+  font-style:italic;
+  line-height:1em;
+  text-indent:10px;
+  font-weight:bold;
+
+} 
+div#sideRight , p span.answer {
+  color: #003300;} 

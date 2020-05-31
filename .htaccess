@@ -1,0 +1,16 @@
+RewriteEngine on
+
+RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-f это исключение, которое не дает переписать ссылки на url, если по указанному адресу файл существует. служит для того чтобы не слетали подключенные стили и скрипты из-за переписанных ссылок на эти файлы (стили и скрипты)
+
+RewriteRule .* index.php?php1chpu=$0 [QSA]
+#[QSA]-Query Stringf Add -  всегда писать эту директиву для того чтобы можно было задать массив гет по всем правилам, а php1chpu(его название задаем произвольно) будет дописано в этот массив . $0 означает ,что задаем правило только по одной маске
+
+
+<FilesMatch "\.(php)$">
+	Deny from all
+</FilesMatch>
+
+<FilesMatch "index.(php)$">
+	Allow from all
+</FilesMatch>
