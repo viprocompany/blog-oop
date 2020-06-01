@@ -1,14 +1,11 @@
 <?php 
 if(!$isAuth){?>
-		<!-- ссылка для добавления статьи авторизованным пользователем -->
-<!-- <p><a class="btn btn-success" href="index.php?c=login">Вход </a></p> -->
 <p><a class="btn btn-success" href="<?php echo ROOT?>login">Вход </a></p>
 <?php }
 elseif($isAuth)
 { ?><!-- приветствие аутентифицированного пользователя  -->
 	<h4>Добро пожаловать, <?php echo $login;?> !</h4>
 	<!-- ссылка для выхода авторизованного пользователя -->
-
 <p><a class="btn btn-outline-danger" href="<?php echo ROOT?>login">Выход</a></p><br>
 					<!-- после подключения правил перезаписи в файле .htaccess делаем урлы человекочитаемыми    , так как теперь в индексном файле страницы при получении из строки(массив гет) значение элемента home , будет происходить соответственно вызов контролера home 
 								<?php echo ROOT?> используем для указания корня сайта , задаем с индексной страницы-->
@@ -24,11 +21,11 @@ elseif($isAuth)
 
 <a class=" btn btn-outline-info" href="<?php echo ROOT?>add">Добавить  статью</a>
 
-		<a class=" btn btn-outline-info"  href="<?php echo ROOT?>add-user">Добавить автора</a>
-				<a class=" btn btn-outline-info" href="<?php echo ROOT?>add-category">Добавить категорию</a>
+		<a class=" btn btn-outline-info"  href="<?php echo ROOT?>addUser">Добавить автора</a>
+				<a class=" btn btn-outline-info" href="<?php echo ROOT?>addCategory">Добавить категорию</a>
 		
 	
-		<a class=" btn btn-outline-info" href="<?php echo ROOT?>add-text
+		<a class=" btn btn-outline-info" href="<?php echo ROOT?>addText
 			">Добавить текст</a>
 <?php } ?>
 <!-- <p><?php echo $msg?></p> -->

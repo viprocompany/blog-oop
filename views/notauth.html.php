@@ -1,0 +1,1 @@
+ <p><a class="btn btn-success" href="<?php echo ROOT?>login">Войти</a></p>

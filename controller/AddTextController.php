@@ -1,20 +1,17 @@
 <?php  
 namespace controller;
-use models\AllTablesModel;
-use models\PostModel;
 use models\BaseModel;
-use models\CategoriesModel;
-use models\UsersModel;
+use models\TextsModel;
 use core\DBConnect;
 use core\Auth;
 use models\Helper;
 
-class AddController extends BaseController
+class AddTextController extends BaseController
 {
 	public function indexAction()
 {
 		// переопределяем title
-	$this->title .=': НОВАЯ СТАТЬЯ';
+	$this->title .=': НОВАЯ СТАТИКА';
 	    //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
 $isAuth = Auth::isAuth();
 //имя пользователя для вывода в приветствии
@@ -25,23 +22,15 @@ $login = Auth::isName();
 if(!$isAuth)
 {
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
-$_SESSION['returnUrl'] = ROOT . "add";
+$_SESSION['returnUrl'] = ROOT . "addText";
  header("Location: " . ROOT . "login");
 }
 //для вызова
 	//создаем объект для подключения к базе данных
 	$db = DBConnect::getPDO();
-//создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-	$mUser = new UsersModel($db);
-	//задаем массив для дальнейшего вывода фамилий авторов в разметке через опшины селекта, после выбора автора из значения опшина подтянется айдишник автора для дальнейшего добавления в статью
- $names= $mUser->getAll(' name');
-	 // $names = $query->fetchAll();	
 
-	$mCategory = new CategoriesModel($db);
-//задаем массив для дальнейшего вывода категорий новостей в разметке через опшины селекта, после выбора категории из значения опшина подтянется айдишник категории для дальнейшего добавления в статью
-$categories= $mCategory->getAll(' title_category');
 
-$mPost = new PostModel($db);
+$mText = new TextsModel($db);
 
 //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
@@ -55,71 +44,61 @@ $images = $img_files;
 
 //получение параметров с формы методом пост
 if(count($_POST) > 0){
-	$title = trim($_POST['title']);
-	$content = trim($_POST['content']);
-	$id_category = trim($_POST['id_category']);
-	$img = trim($_POST['image']);
-	// $image = trim($_POST['image']);
-	// айдишник получаем из значения value опшина после того как в выпадающем списке был выбран автор 
-	$id_user = trim($_POST['name']);	
+  $text_name = trim($_POST['text_name']);
+  $text_content = trim($_POST['text_content']);
+  $description = trim($_POST['description']);
 //проверяем корректность вводимого названия 
-	if(!(Helper::newCorrectTitle($title)))
-	{		
-		$msg = Helper::errors();		
-	}	
+  // if(!correct_name($text_content))
+  // {   
+  //   $msg = errors();
+  // } 
+//проверяем корректность вводимого названия 
+	// if(!(Helper::newCorrectTitle($text_name)))
+	// {		
+	// 	$msg = Helper::errors();		
+	// }	
 	//проверяем корректность вводимого названия 
-	elseif($title == '')
+	if($text_name == '')
 	{		
 			$msg = 'Заполните название!';
 	}	
 	// проверка названия на незанятость вводимого названия 
-	elseif (!($mPost->correctOrigin('id_article', 'article', 'title', $title))) 
+	elseif (!($mText->correctOrigin( 'id_text ', ' texts ', ' text_name ', $text_name))) 
 	{
-		$msg = Helper::errors();
-		// $msg = 'Название занято!';
-	}
- //проверяем корректность вводимого айдишника автора
-	elseif(!($mUser->correctId('name', 'users', 'id_user', $id_user )))
-	{   
-		$msg = 'Неверный код автора';
-	}	
-//проверяем корректность вводимого айдишника категории новости
-	elseif(!$mCategory->correctId('title_category', 'categories', 'id_category', $id_category ))
-	{   
-		$msg = 'Неверный код категории новости';
+		// $msg = Helper::errors();
+		$msg = 'Название занято!';
 	}
 //проверяем корректность вводимого контента 
-	elseif(!(Helper::correctContent($content)))
+	elseif(!(Helper::newCorrectTitle($text_content)))
 	{
-		$msg = Helper::errors();
+		// $msg = Helper::errors();
+		$msg = "Введите текст статической вставки!";
 	}	
 	else
 	{
 //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
 //добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
-		$new_article_id = $mPost->addPost($title,$content, $id_user, $id_category, $img);	
+		$new_article_id = $mText->addText($text_name, $text_content, $description);	
 
-			header("Location: " . ROOT . "post/$new_article_id");
+			header("Location: " . ROOT . "text/$new_text_id");
 		exit();
 	}
 }
 else{
 //если данные в инпуты не вводились, задаем пустые значения инпутов формы для того чтобы через РНР вставки в разметке кода не выскакивали(на странице в полях инпутов для заполнения) нотации об отсутствии данных в переменных $title и $content
-	$title = "";
-	$id_user = "";
-	$name = "";
-	$id_category = "";
-	$content = "";
-	$img = "";
-	$msg = '';
+  $text_name = "";
+  $text_content = '';
+  $description = '';
+  $msg = '';
 } 
-	  $this->content = $this->build(__DIR__ . '/../views/add.html.php', [
-	  	'names' => $names,
-	  	'categories' => $categories,
+	  $this->content = $this->build(__DIR__ . '/../views/add-text.html.php', [
+	  	'isAuth' => $isAuth ,
+	  	'text_name' => $text_name,
+	  	'text_content' => $text_content,
 	  	'images' => $images,
+	  	'description' => $description,
 	  	'msg' => $msg,
-	  	'isAuth' => $isAuth,
-      'login' => $login
+	  	'login' => $login
 	  ]);
 
 

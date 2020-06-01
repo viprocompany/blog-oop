@@ -1,7 +1,7 @@
 <?php
 namespace models;
 
-class ArticleModel extends BaseModel
+class PostModel extends BaseModel
 {
 	//эти поля заданы в базовом в классе и задааются через конструктор
 	// private $db;
@@ -20,7 +20,7 @@ class ArticleModel extends BaseModel
 		parent::__construct($db, 'article','id_article');
 	}	
   
-  	public  function addArticle($title, $content, $id_user, $id_category, $img)
+  	public  function addPost($title, $content, $id_user, $id_category, $img)
 	{		
   $sql = sprintf("INSERT INTO %s ( `%s`,`%s`,`%s`,`%s`,`%s`) VALUES (:t,:c,:us,:cat, :i)", $this->table, $this->title, $this->content, $this->id_user, $this->id_category, $this->img, $this->img );
 
@@ -35,7 +35,7 @@ class ArticleModel extends BaseModel
 		return $this->db->lastInsertId();
 	}
 
-	public  function updateArticle($title, $content, $id_user, $id_category,  $img, $id)
+	public  function updatePost($title, $content, $id_user, $id_category,  $img, $id)
 	{	
 		// $query =	self::dbQuery($sql, $params);
 		$sql = sprintf('UPDATE  %s  SET %s=:t, %s=:c,   %s=:us, %s=:cat , %s=:i   WHERE %s= :new  ',  $this->table, $this->title, $this->content, $this->id_user, $this->id_category, $this->img,  $this->id_param );

@@ -50,7 +50,7 @@ abstract class BaseModel
 			'i'=>$id
 	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное
 		]);
-		$res = $stmt->fetch();
+		$res = $stmt->fetchAll();
 		return $res ;
 	}
 	//создание статьи путем вставки запроса и массива значений для подстановки в запрос С ПОЛУЧЕНИЕМ ЗНАЧЕНИЯ ПОСЛЕДНЕГО ВВЕДЕННОГО АЙДИШНИКА
@@ -83,7 +83,6 @@ function correctOrigin($id, $table, $param, $text){
 	if (!$id_original == "")
 	{
 			Helper::errors('Название занято!');
-
 		return false;
 	}
 	return true;
