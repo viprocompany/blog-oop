@@ -51,26 +51,20 @@ abstract class BaseModel
 	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное, передаем в третий параметр константу из класса DBDriver для выборки одной строки 
 	}
 
-	//создание статьи путем вставки запроса и массива значений для подстановки в запрос С ПОЛУЧЕНИЕМ ЗНАЧЕНИЯ ПОСЛЕДНЕГО ВВЕДЕННОГО АЙДИШНИКА
-	public function addRow($sql, $params = [])
-	{		
-		self::dbQuery($sql, $params);
-		\core\DBConnect::getPDO();
-		// $new_article_id = $db->lastInsertId();
-		return $this->db->lastInsertId();
-	}
+
 
 	public function add(array $params)
 	{
+		
 		return $this->db->insert($this->table, $params);
 	}
 
-		public function edit( $name, $name_new, $where)
-	{
 
-		return $this->db->update($this->table,$this->id_param, $name, $name_new, $where);
-		
-	}
+  	public function edit(array $params,  $id)
+  	{
+  		return $this->db->update($this->table, $this->id_param, $params, $id);
+  	}
+
 
 	public  function deleteById($id)
 	{

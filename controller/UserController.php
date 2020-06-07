@@ -197,19 +197,19 @@ public function editAction()
       if($name_new == '')    {  
         $err404 = true; 
         $msg = 'Заполните имя!';
-        echo   $name_new;
+      
       } 
   //проверяем корректность вводимого названия 
       elseif(!(Helper::correctName($name_new)))    { 
         $err404 = true;  
         $msg = Helper::errors();   
-        echo   $name_new; 
+  
       } 
    //проверка названия на незанятость вводимого названия
       elseif(!($mUser->correctOrigin('id_user', 'users', 'name', $name_new))){   
         $err404 = true;
         $msg = 'Название занято';
-        echo  'Название занято : '. $name_new;
+
       }   
       else {
   //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 

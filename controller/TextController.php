@@ -1,9 +1,13 @@
 <?php  
 namespace controller;
+
+use models\BaseModel;
 use models\TextsModel;
 use core\DBConnect;
 use core\Auth;
+use core\Request;
 use core\DBDriver;
+use models\Helper;
 
 class TextController extends BaseController
 {
@@ -53,7 +57,7 @@ class TextController extends BaseController
 public function oneAction()
 { 
   $db = DBConnect::getPDO();
-  $mTexts = new TextsModel(new DBDriver($db));
+  $mText = new TextsModel(new DBDriver($db));
 
 //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
   $isAuth = Auth::isAuth();
@@ -71,16 +75,17 @@ public function oneAction()
   $err404 = false;
 
   $id = $this->request->get('id');
-  $texts = $mTexts->getById($id); 
+  $text = $mText->getById($id); 
     // переопределяем title
   
-    $text_name = $texts['text_name'];
-    $text_content = $texts['text_content'];
+    $text_name = $text['text_name'];
+    $text_content = $text['text_content'];
+    $id_text = $text['id_text'];
         //    проверяем корректность вводимого айдишника
   
   $this->title .=': ' . $text_name;
     //при добавлении нового категории будет создаваться переменная шаблона для вывода данных о новом авторе , которая далее будет добавлена в массив переменных шаблона v_main
-  if(!($mTexts->correctId('text_name', 'texts', 'id_text', $id )))
+  if(!($mText->correctId('text_name', 'texts', 'id_text', $id )) || !$id_text)
   { 
     $err404 = true;  
     $this->content = $this->build('errors', [
@@ -103,15 +108,217 @@ public function oneAction()
   $images = $img_files;
 
 //применяем к объекту метод из его класса
-    $texts = $mTexts->getAll('id_text DESC ');
+    $text = $mText->getAll('id_text DESC ');
 // var_dump($users);
     $this->content = $this->build('texts', [
-      'texts' => $texts,
+      'texts' => $text,
       'images' => $images,
       'isAuth' => $isAuth,
       'login' => $login
     ]);
   }
+}
+
+public function addAction()
+{
+    // переопределяем title
+  $this->title .=': НОВАЯ СТАТИКА';
+//вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
+  $isAuth = Auth::isAuth();
+//имя пользователя для вывода в приветствии
+  $login = Auth::isName();
+  $msg = '';
+//проверка авторизации
+  if(!$isAuth)
+  {
+//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
+    $_SESSION['returnUrl'] = ROOT . "text/add";
+    header("Location: " . ROOT . "login");
+  }
+  //если данные в инпуты не вводились, задаем пустые значения инпутов формы для того чтобы через РНР вставки в разметке кода не выскакивали(на странице в полях инпутов для заполнения) нотации об отсутствии данных в переменных $title и $content
+    // $title = "";
+  $text_name = "";
+  $text_content = '';
+  $description = '';
+  $msg = '';
+//для вызова
+//создаем объект для подключения к базе данных
+  $db = DBConnect::getPDO();
+//создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
+  $mText = new TextsModel(new DBDriver(DBConnect::getPDO()));
+
+  //создаем массив сканирую директорию img
+// $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
+// $dir_img =  'f:/OpenServer/OSPanel/domains/blog/images';
+$dir_img =  'd:/open-server/OSPanel/domains/blog-oop/images';
+   
+$img_files = scandir($dir_img);
+//создаем пустой массив для картинок
+$images = [];
+$images = $img_files;
+
+//получение параметров с формы методом пост
+ if($this->request->isPost()){
+  $text_name = trim($_POST['text_name']);
+  $text_content = trim($_POST['text_content']);
+  $description = trim($_POST['description']);
+
+//проверяем корректность вводимого названия 
+  // if(!(Helper::newCorrectTitle($text_name)))
+  // {    
+  //  $msg = Helper::errors();    
+  // }  
+  //проверяем корректность вводимого названия 
+  if($text_name == '')
+  {   
+      $msg = 'Заполните название!';
+  } 
+  // проверка названия на незанятость вводимого названия 
+  elseif (!($mText->correctOrigin( 'id_text ', ' texts ', ' text_name ', $text_name))) 
+  {
+    // $msg = Helper::errors();
+    $msg = 'Название занято!';
+  }
+//проверяем корректность вводимого контента 
+  elseif(!(Helper::newCorrectTitle($text_content)))
+  {
+    // $msg = Helper::errors();
+    $msg = "Введите текст статической вставки!";
+  } 
+  else
+  {
+//подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
+//добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
+    $new_article_id = $mText->add([
+      'text_name'=>$text_name,
+       'text_content'=>$text_content,
+       'description'=> $description 
+    ]); 
+      header("Location: " . ROOT . "text/$new_text_id");
+    exit();
+  }
+}
+    $this->content = $this->build('add-text', [
+      'isAuth' => $isAuth ,
+      'text_name' => $text_name,
+      'text_content' => $text_content,
+      'images' => $images,
+      'description' => $description,
+      'msg' => $msg,
+      'login' => $login
+    ]);
+}
+
+  public function editAction()
+{
+
+//вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
+  $isAuth = Auth::isAuth();
+//имя пользователя для вывода в приветствии
+  $login = Auth::isName();
+  $msg = '';
+//проверка авторизации
+  if(!$isAuth){
+//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
+    $_SESSION['returnUrl'] = ROOT . "user/edit/$id_user";
+    header("Location: " . ROOT . "login");
+  }
+//для вызова
+  //создаем объект для подключения к базе данных
+  $db = DBConnect::getPDO();
+//создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
+ $mText = new TextsModel(new DBDriver(DBConnect::getPDO()));
+  $id = $this->request->get('id');
+  //задаем массив для дальнейшего вывода фамилий авторов в разметке через опшины селекта, после выбора автора из значения опшина подтянется айдишник автора для дальнейшего добавления в статью
+   $text = $mText->getById($id); 
+    // переопределяем title
+  
+    $text_name = $text['text_name'];
+    $text_content = $text['text_content'];
+    $id_text = $text['id_text'];
+    $description = $text['description'];
+        //    проверяем корректность вводимого айдишника
+  
+  $this->title .=': ' . $text_name;
+    //создаем массив сканирую директорию img
+// $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
+// $dir_img =  'f:/OpenServer/OSPanel/domains/blog/images';
+$dir_img =  'd:/open-server/OSPanel/domains/blog-oop/images';
+   
+$img_files = scandir($dir_img);
+//создаем пустой массив для картинок
+$images = [];
+$images = $img_files;
+    //при добавлении нового категории будет создаваться переменная шаблона для вывода данных о новом авторе , которая далее будет добавлена в массив переменных шаблона v_main
+  if(!($mText->correctId('text_name', 'texts', 'id_text', $id_text )) || !$id_text)
+  { 
+    $err404 = true;  
+    $this->content = $this->build('errors', [
+    ]);
+  }
+  else{
+      //получение параметров с формы методом пост
+if($this->request->isPost()){
+  $text_name = trim($_POST['text_name']);
+  $text_content = trim($_POST['text_content']);
+  $description = trim($_POST['description']);
+
+//проверяем корректность вводимого названия 
+  // if(!(Helper::newCorrectTitle($text_name)))
+  // {    
+  //  $msg = Helper::errors();    
+  // }  
+  //проверяем корректность вводимого названия 
+  if($text_name == '')
+  {   
+      $msg = 'Заполните название!';
+  } 
+  // проверка названия на незанятость вводимого названия 
+  elseif (($mText->correctOrigin( 'id_text ', ' texts ', ' text_name ', $text_name))) 
+  {
+    // $msg = Helper::errors();
+    $msg = 'Название не менять!';
+  }
+//проверяем корректность вводимого контента 
+  elseif(!(Helper::newCorrectTitle($text_content)))
+  {
+    // $msg = Helper::errors();
+    $msg = "Введите текст статической вставки!";
+  } 
+    elseif(!(Helper::newCorrectTitle($description)))
+  {
+    // $msg = Helper::errors();
+    $msg = "Введите текст корректное описание!";
+  } 
+  else
+  {
+  // не работает показ последнего введенного айдишника в функции edit
+$id_new =  $mText->edit(
+      [
+      'text_name'=>$text_name,
+       'text_content'=>$text_content,
+       'description'=> $description 
+    ], 
+           $id_text 
+    ); 
+    
+      header("Location: " . ROOT . "text/$id_text  ");
+    exit();
+  }
+   }
+   $this->content = $this->build('edit-text', [
+      'isAuth' => $isAuth ,
+      'text_name' => $text_name,
+      'text_content' => $text_content,
+      'images' => $images,
+      'description' => $description,
+      'msg' => $msg,
+      'login' => $login
+  ]);
+ }
+
 
 }
+
+
 }

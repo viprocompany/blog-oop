@@ -18,7 +18,7 @@ foreach ($texts as $t) {
   <?php }?> 
   <span>ОПИСАНИЕ:  </span><?=$description?><br>
 
-  <a class="btn  btn-outline-warning" href="<?php echo ROOT?>edit-text/<?=$id_text?>">Изменить</a> <br>
+  <a class="btn  btn-outline-warning" href="<?php echo ROOT?>text/edit/<?=$id_text?>">Изменить</a> <br>
    <?php  
      // foreach($images as $f)
      // {

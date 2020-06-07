@@ -39,20 +39,28 @@ class DBDriver
 		$sql = sprintf('INSERT INTO %s %s VALUES %s', $table, $columns, $masks);
 		$stmt = $this->pdo->prepare($sql);
 		$stmt->execute($params);
+		BaseModel::check_error($stmt); 	
 		return $this->pdo->lastInsertId();
 	}
 
-	public function update($table, $id_param, $name, $name_new, $where)
+		public function update($table, $id_param, array $params,  $id)
 	{
-			$params = ([
-		 	'p' => $name_new,
-		 	'w' => $where
-		 ]);
-		$sql = sprintf('UPDATE  %s  SET %s= :p  WHERE %s= :w  ', $table ,  $name, $id_param );
-		$stmt = $this->pdo->prepare($sql);
-		return $stmt->execute( $params);
-		// $this->pdo->lastInsertId()
+		$param = [];	
+		foreach($params as $k => $v) {
+            $param[] = "$k = :$k";
+        }      
+		$names = sprintf('%s', implode(', ', $param));
+		$where =   ($id_param ." = " . $id) ;  
+		$sql = sprintf('UPDATE %s SET %s WHERE %s', $table, $names , $where);
+    	$query = $this->pdo->prepare($sql);
+    	$query->execute($params);    	
+    	BaseModel::check_error($query); 	
+    	//база не хочет выдавать последний введенный айди
+    	\core\DBConnect::getPDO();
+    	return $this->pdo->LastInsertId();
 	}
+
+	
 
 	public function delete($table, $where)
 	{
