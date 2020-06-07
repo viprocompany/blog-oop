@@ -19,13 +19,13 @@ elseif($isAuth)
 				<hr>
 	<!-- ссылка для добавления статьи авторизованным пользователем -->
 
-<a class=" btn btn-outline-info" href="<?php echo ROOT?>add">Добавить  статью</a>
+<a class=" btn btn-outline-info" href="<?php echo ROOT?>home/add">Добавить  статью</a>
 
-		<a class=" btn btn-outline-info"  href="<?php echo ROOT?>addUser">Добавить автора</a>
-				<a class=" btn btn-outline-info" href="<?php echo ROOT?>addCategory">Добавить категорию</a>
+		<a class=" btn btn-outline-info"  href="<?php echo ROOT?>user/add">Добавить автора</a>
+				<a class=" btn btn-outline-info" href="<?php echo ROOT?>category/add">Добавить категорию</a>
 		
 	
-		<a class=" btn btn-outline-info" href="<?php echo ROOT?>addText
+		<a class=" btn btn-outline-info" href="<?php echo ROOT?>text/add
 			">Добавить текст</a>
 <?php } ?>
 <!-- <p><?php echo $msg?></p> -->

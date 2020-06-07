@@ -47,7 +47,7 @@ class LoginController extends BaseController
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
 		$mAuth = new Auth($db);
 
-		$this->content = $this->build(__DIR__ . '/../views/login.html.php', [   	
+		$this->content = $this->build('login', [   	
 		]); 
 	}
 

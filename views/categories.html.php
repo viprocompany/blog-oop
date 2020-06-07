@@ -9,7 +9,7 @@
           <!-- старые ссылки до приведение к человекочитаемым урлам ЧПУ -->
      <!--  <a class="btn btn-outline-warning" href="index.php?c=edit-category&id_category=<?=$id_category?>">Изменить</a>
  -->    
-   <a class="btn btn-outline-warning" href="<?php echo ROOT?>edit-category/<?=$id_category?>">Изменить</a>
+   <a class="btn btn-outline-warning" href="<?php echo ROOT?>category/edit/<?=$id_category?>">Изменить</a>
     <?php }  ?>    
     <hr>
   <?php }

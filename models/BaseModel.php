@@ -1,13 +1,15 @@
 <?php
 namespace models;
 
+use core\DBDriver;
+
 abstract class BaseModel
 {
 	protected $db;
 	protected $table;
 	protected $id_param;
 
-	public function __construct(\PDO $db, $table='', $id_param='')
+	public function __construct( DBDriver $db, $table='', $id_param='')
 	{
 		$this->db = $db;
 		$this->table = $table;
@@ -36,23 +38,19 @@ abstract class BaseModel
 
 	public function getAll($order)
 	{
-		$stmt = self::dbQuery("SELECT *  FROM " . $this->table . " ORDER BY " . $order
-	) ;
-		$stmt = $stmt->fetchAll();
-		return $stmt;
+		$sql= ("SELECT *  FROM " . $this->table . " ORDER BY " . $order
+	) ;		
+		return $this->db->select($sql);
 	}
 
 	public function getById( $id )
 	{		
-		$sql = sprintf('SELECT * FROM  %s  WHERE  %s= :i '  , $this->table, $this->id_param);
-
-		$stmt = self::dbQuery($sql,[			
-			'i'=>$id
-	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное
-		]);
-		$res = $stmt->fetchAll();
-		return $res ;
+		$sql = sprintf('SELECT * FROM  %s  WHERE  %s= :id '  , $this->table, $this->id_param);		
+		// $sql = ("SELECT * FROM " . $this->table . " WHERE  " . $this->id_param . "= :id");
+		return  $this->db->select($sql,['id' => $id], DBDriver::FETCH_ONE);
+	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное, передаем в третий параметр константу из класса DBDriver для выборки одной строки 
 	}
+
 	//создание статьи путем вставки запроса и массива значений для подстановки в запрос С ПОЛУЧЕНИЕМ ЗНАЧЕНИЯ ПОСЛЕДНЕГО ВВЕДЕННОГО АЙДИШНИКА
 	public function addRow($sql, $params = [])
 	{		
@@ -60,6 +58,18 @@ abstract class BaseModel
 		\core\DBConnect::getPDO();
 		// $new_article_id = $db->lastInsertId();
 		return $this->db->lastInsertId();
+	}
+
+	public function add(array $params)
+	{
+		return $this->db->insert($this->table, $params);
+	}
+
+		public function edit( $name, $name_new, $where)
+	{
+
+		return $this->db->update($this->table,$this->id_param, $name, $name_new, $where);
+		
 	}
 
 	public  function deleteById($id)
@@ -74,11 +84,8 @@ abstract class BaseModel
 //проверка наличия ДОБАВЛЯЕМОГO поля УНИВЕРСАЛЬНАЯ
 function correctOrigin($id, $table, $param, $text){
 	$sql = ("SELECT  $id FROM $table  WHERE $param = :t");
-	 $query = self::dbQuery($sql,[
-			't'=>$text
-		 ]);
-	//переменная айдишника для имени и фамилии автора
-	$id_original = $query->fetchColumn();	
+//переменная айдишника для имени и фамилии автора
+	 $id_original = $this->db->select($sql,['t'=>$text], DBDriver::FETCH_ONE);
 	//если айдишник не пустой значит такой автор уже есть
 	if (!$id_original == "")
 	{
@@ -91,11 +98,11 @@ function correctOrigin($id, $table, $param, $text){
 //УНИВЕРСАЛЬНАЯ проверка корректности получаемого айдишника сущности, то есть его наличие
 function correctId($text, $table, $param, $id ){
 	//получаем массив айдишников категории новости
-	$query = self::dbQuery("SELECT $text FROM $table WHERE $param = '$id';");
-//пременаая с названием категории
-	$cat = $query->fetchColumn();
+	$sql = ("SELECT $text FROM $table WHERE $param = '$id';");
+	//пременаая с названием категории
+  $stmt=$this->db->select($sql); 		
 //если переданного айдишника нет, значит нет и категории(пустая),  значит пишем ошибку
-	if($cat == "")
+	if($stmt == "")
 	{
 		Helper::errors('Неверный выбор, введите корректный параметр !');
 		return false;

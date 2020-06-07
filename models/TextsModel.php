@@ -1,6 +1,8 @@
 <?php
 namespace models;
 
+use core\DBDriver;
+
 class TextsModel extends BaseModel
 {		//эти поля заданы в базовом в классе и задааются через конструктор
 	// private $db;
@@ -12,7 +14,7 @@ class TextsModel extends BaseModel
 	protected $text_content = 'text_content';
 	protected $description = 'description';
 
-	public function __construct(\PDO $db)
+	public function __construct(DBDriver $db)
 	{
 		parent::__construct($db, 'texts','id_text');
 	}	

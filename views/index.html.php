@@ -14,7 +14,7 @@
 		<!-- <div><?=$message['content']?></div> -->	
 		<!-- старые ссылки до приведение к человекочитаемым урлам ЧПУ --> 
 		<!-- <a class="btn btn-success" href="index.php?c=post&id_article=<?=$id_article;?>">ЧИТАТЬ</a> -->
-		<a class="btn btn-success" href="<?php echo ROOT?>post/<?=$id_article;?>">ЧИТАТЬ</a>
+		<a class="btn btn-success" href="<?php echo ROOT?>home/<?=$id_article;?>">ЧИТАТЬ</a>
 		<?php if($isAuth) { ?>
 			<!-- старые ссылки до приведение к человекочитаемым урлам ЧПУ -->
 		<!-- 	<a class="btn btn-outline-warning" href="index.php?c=edit&id_article=<?=$id_article?>">Изменить</a> -->

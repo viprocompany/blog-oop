@@ -1,6 +1,8 @@
 <?php
 namespace models;
 
+use core\DBDriver;
+
 class  CategoriesModel extends BaseModel
 {
 		//эти поля заданы в базовом в классе и задааются через конструктор
@@ -11,7 +13,7 @@ class  CategoriesModel extends BaseModel
 	//задаем поля для запросов, которых нет  в конструкторе
 	protected $title_category = 'title_category';
 	
-	public function __construct(\PDO $db)
+	public function __construct(DBDriver $db)
 	{
 		parent::__construct($db, 'categories','id_category');
 	}

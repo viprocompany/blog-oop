@@ -1,6 +1,8 @@
 <?php
 namespace models;
 
+use core\DBDriver;
+
 class PostModel extends BaseModel
 {
 	//эти поля заданы в базовом в классе и задааются через конструктор
@@ -15,7 +17,7 @@ class PostModel extends BaseModel
 	protected $id_category = 'id_category';
 	protected $img = 'img';
 
-	public function __construct(\PDO $db)
+	public function __construct(DBDriver $db)
 	{
 		parent::__construct($db, 'article','id_article');
 	}	

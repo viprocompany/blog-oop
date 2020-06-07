@@ -1,9 +1,11 @@
 <p><a class="btn btn-outline-secondary" href="<?php echo ROOT?>home?view=base">Отобразить нормально</a></p>
 <!-- старые ссылки до приведение к человекочитаемым урлам ЧПУ -->
 <!-- <p><a class="btn btn-outline-secondary" href="index.php?c=home&view=base">Отобразить нормально</a></p> -->
-<?php  foreach($posts as $message)  {  $id_article = $message['id_article'];  ?>
+<?php  foreach($posts as $message)  { 
+ $id_article = $message['id_article']; 
+  ?>
 <div>	
-	<strong><a href="<?php echo ROOT?>post/<?=$id_article;?>"><?=$message['title']?></a></strong>
+	<strong><a href="<?php echo ROOT?>home/<?=$id_article;?>"><?=$message['title']?></a></strong>
 <!-- старые ссылки до приведение к человекочитаемым урлам ЧПУ -->
 		<!-- <strong><a href="index.php?c=post&id_article=<?=$id_article;?>"><?=$message['title']?></a></strong> -->
 	<em><?=$message['date']?></em>         

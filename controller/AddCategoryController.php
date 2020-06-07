@@ -4,6 +4,7 @@ use models\BaseModel;
 use models\CategoriesModel;
 use core\DBConnect;
 use core\Auth;
+use core\DBDriver;
 use models\Helper;
 
 class AddCategoryController extends BaseController
@@ -22,16 +23,14 @@ $login = Auth::isName();
 if(!$isAuth)
 {
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
-$_SESSION['returnUrl'] = ROOT . "addategory";
+$_SESSION['returnUrl'] = ROOT . "addCategory";
  header("Location: " . ROOT . "login");
 }
 //для вызова
 	//создаем объект для подключения к базе данных
 	$db = DBConnect::getPDO();
 
-	$mCategory = new CategoriesModel($db);
-
-
+	$mCategory = new CategoriesModel(new DBDriver(DBConnect::getPDO()));
 //получение параметров с формы методом пост
 if(count($_POST) > 0){
  $title_category = trim($_POST['title_category']);
@@ -51,9 +50,9 @@ if(count($_POST) > 0){
 	{
 //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
 //добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
-		$new_article_id = $mCategory->addCategory($title_category);	
+		$new_id_category = $mCategory->addCategory($title_category);	
 
-			header("Location: " . ROOT . "category/$new_article_id");
+			header("Location: " . ROOT . "category/$new_id_category");
 		exit();
 	}
 }
@@ -63,7 +62,7 @@ else{
 	$id_category = "";
 	$msg = '';
 } 
-	  $this->content = $this->build(__DIR__ . '/../views/add-category.html.php', [	  	
+	  $this->content = $this->build('add-category', [	  	
 	  	'title_category' => $title_category,	  	
 	  	'msg' => $msg,
 	  	'isAuth' => $isAuth,
@@ -72,5 +71,7 @@ else{
 
 
 }
+
+
 
 }

@@ -4,6 +4,7 @@ use models\BaseModel;
 use models\TextsModel;
 use core\DBConnect;
 use core\Auth;
+use core\DBDriver;
 use models\Helper;
 
 class AddTextController extends BaseController
@@ -30,12 +31,12 @@ $_SESSION['returnUrl'] = ROOT . "addText";
 	$db = DBConnect::getPDO();
 
 
-$mText = new TextsModel($db);
+$mText = new TextsModel(new DBDriver(DBConnect::getPDO()));
 
 //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
 // $dir_img =  'f:/OpenServer/OSPanel/domains/blog/images';
-$dir_img =  'D:/open-server/OSPanel/domains/blog-oop/images';
+$dir_img =  'd:/open-server/OSPanel/domains/blog-oop/images';
    
 $img_files = scandir($dir_img);
 //создаем пустой массив для картинок
@@ -91,7 +92,7 @@ else{
   $description = '';
   $msg = '';
 } 
-	  $this->content = $this->build(__DIR__ . '/../views/add-text.html.php', [
+	  $this->content = $this->build('add-text', [
 	  	'isAuth' => $isAuth ,
 	  	'text_name' => $text_name,
 	  	'text_content' => $text_content,

@@ -1,6 +1,8 @@
 <?php
 namespace models;
 
+use core\DBDriver;
+
 class  UsersModel extends BaseModel
 {
 	//эти поля заданы в базовом в классе и задааются через конструктор
@@ -11,7 +13,7 @@ class  UsersModel extends BaseModel
 	//задаем поля для запросов, которых нет  в конструкторе
 	protected $name = 'name';
 
-	public function __construct(\PDO $db)
+	public function __construct(DBDriver $db)
 	{
 		parent::__construct($db, 'users','id_user');
 	}

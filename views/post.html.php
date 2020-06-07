@@ -1,13 +1,11 @@
 <?php 
-foreach($posts as $art)
-{  
-$title = $art['title'];
-$date = $art['date'];
-$name = $art['name'];
-$title_category = $art['title_category'];
-$content = $art['content'];
-$img = $art['img'];
-}?>
+$title = $posts['title'];
+$date = $posts['date'];
+$name = $posts['name'];
+$title_category = $posts['title_category'];
+$content = $posts['content'];
+$img = $posts['img'];
+?>
 <div><?php echo $msg?></div>
 <p><a class="btn btn-outline-secondary" href="<?php echo '/'?>">Назад</a></p>
 <!-- выводим название статьи и текст статьи -->
