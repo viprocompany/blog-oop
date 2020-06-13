@@ -161,12 +161,7 @@ public function editAction()
 //имя пользователя для вывода в приветствии
   $login = Auth::isName();
   $msg = '';
-//проверка авторизации
-  if(!$isAuth){
-//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
-    $_SESSION['returnUrl'] = ROOT . "user/edit/$id_user";
-    header("Location: " . ROOT . "login");
-  }
+
 //для вызова
   //создаем объект для подключения к базе данных
   $db = DBConnect::getPDO();
@@ -179,8 +174,14 @@ public function editAction()
   $name = $users['name'];
   $id_user =  $users['id_user'];
 //    проверяем корректность вводимого айдишника
-  $this->title .=': ИЗМЕНИТЬ: ' . $name;
-
+  $this->title .=': ИЗМЕНИТЬ  АВТОРА: ' . $name;
+//проверка авторизации
+  if(!$isAuth){
+//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
+    $_SESSION['returnUrl'] = ROOT . "user/edit/$id_user";
+    header("Location: " . ROOT . "login");
+  }
+  
   if(!($mUser->correctId('name', 'users', 'id_user', $id )) || !$id_user)  { 
     $err404 = true;  
     $this->content = $this->build ('errors', [
@@ -228,8 +229,57 @@ public function editAction()
     'id_user' => $id
   ]);
  }
-
-
 }
+public function deleteAction()
+  { 
+    $db = DBConnect::getPDO();
+ $mUser = new UsersModel(new DBDriver($db ));
+//вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
+
+    $isAuth = Auth::isAuth();
+//имя пользователя для вывода в приветствии
+    $login = Auth::isName();
+    $msg = '';
+//проверка авторизации
+    if(!$isAuth)
+    {
+//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
+    $_SESSION['returnUrl'] = ROOT . "user";
+  // Header('Location: login.php');
+    }
+    $err404 = false;
+
+    $id = $this->request->get('id');
+    $users = $mUser->getById($id); 
+    // переопределяем title    
+    $name = $users['name'];
+    $id_user = $users['id_user'];
+    //    проверяем корректность вводимого айдишника   
+    //при добавлении нового категории будет создаваться переменная шаблона для вывода данных о новом авторе , которая далее будет добавлена в массив переменных шаблона v_main
+    if(!$mUser->correctId('name', 'users', 'id_user', $id_user ))
+    { 
+      $err404 = true;  
+      $this->content = $this->build('errors', [
+    ]);
+    }
+    else{      
+
+      $mUser->deleteById($id);
+      // header("Location: " . ROOT . "user/$id_category");
+      $this->new_row = $this->build('users-delete', [
+        'name' => $name,
+        'id_user' => $id_user
+      ]); 
+
+  $users = $mUser->getAll(' name ');
+// var_dump($users);
+  $this->content = $this->build('users', [
+    'users' => $users,
+    'isAuth' => $isAuth,
+    'login' => $login
+  ]);
+    }
+  }
+
 
 }

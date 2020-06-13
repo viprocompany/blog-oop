@@ -62,8 +62,12 @@ class DBDriver
 
 	
 
-	public function delete($table, $where)
+	public function delete($table,$id_param, $id)
 	{
-
+			$sql = sprintf('DELETE FROM  %s  WHERE  %s= :id '  , $table, $id_param);
+		$stmt = $this->pdo->prepare($sql);	
+		$stmt->execute(['id' => $id]);		
+		BaseModel::check_error($stmt); 
+		return ;
 	}
 }

@@ -18,7 +18,10 @@ foreach ($texts as $t) {
   <?php }?> 
   <span>ОПИСАНИЕ:  </span><?=$description?><br>
 
-  <a class="btn  btn-outline-warning" href="<?php echo ROOT?>text/edit/<?=$id_text?>">Изменить</a> <br>
+  <a class="btn  btn-outline-warning" href="<?php echo ROOT?>text/edit/<?=$id_text?>">Изменить</a> 
+
+     <a class="btn btn-outline-danger"  id="delete" onclick="if (!confirm('Удалить статический текст:  <?=$text_name ?> ?')) return false  " href="<?php echo ROOT?>text/delete/<?=$id_text?>"   >Удалить</a><br>
+
    <?php  
      // foreach($images as $f)
      // {

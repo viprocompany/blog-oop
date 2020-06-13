@@ -16,7 +16,9 @@
 	<!-- <div><?=$message['content']?></div> -->	 
 <!-- <button class="btn btn-outline-success">	<a href="post.php?id_article=<?=$id_article;?>">ЧИТАТЬ</a></button> -->
 	<?php if($isAuth) { ?>
-		<a class="btn  btn-outline-warning" href="<?php echo ROOT?>edit/<?=$id_article?>">Изменить</a>
+		<a class="btn  btn-outline-warning" href="<?php echo ROOT?>home/edit/<?=$id_article?>">Изменить</a>
+
+		 <a class="btn btn-outline-danger"  id="delete" onclick="if (!confirm('Удалить статью:  <?=$message['title'] ?> ?')) return false  " href="<?php echo ROOT?>home/delete/<?=$id_article?>"   >Удалить</a><br>
 	<?php }  ?>   
 	<hr>     
 </div>

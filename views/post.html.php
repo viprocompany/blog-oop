@@ -5,6 +5,7 @@ $name = $posts['name'];
 $title_category = $posts['title_category'];
 $content = $posts['content'];
 $img = $posts['img'];
+$id_article = $posts['id_article'];
 ?>
 <div><?php echo $msg?></div>
 <p><a class="btn btn-outline-secondary" href="<?php echo '/'?>">Назад</a></p>
@@ -20,7 +21,7 @@ $img = $posts['img'];
 <br>
 <?php }?>
 <?php if($isAuth){?>
-	<a class="btn  btn-outline-warning" href="<?php echo ROOT?>edit/<?=$id_article?>">Изменить</a>
+	<a class="btn  btn-outline-warning" href="<?php echo ROOT?>home/edit/<?=$id_article?>">Изменить</a>
 <?php }  ?>  
 <hr>
 <div><?php echo $content?></div>

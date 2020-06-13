@@ -79,7 +79,8 @@ $images = [];
 $images = $img_files;
 //сохранение измененных данных
 if((count($_POST) > 0) )
-{	// $id_article_new = $id_article;
+{	
+// $id_article_new = $id_article;
 	$title_new = trim($_POST['title']);
 	$id_category_new = trim($_POST['id_category']);
 	$content_new = trim($_POST['content']);

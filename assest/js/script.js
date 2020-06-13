@@ -1,6 +1,10 @@
-﻿$('.my-carousel').carousel({
-	interval: 7000
-});
-$('.carousel-fade').carousel({
-	interval: 7000
-});
+﻿window.onload = function() {
+
+// document.querySelector('#delete').onclick = function(){
+// if(confirm("ПОДТВЕРДИТЕ УДАЛЕНИЕ!")){
+// 	document.querySelector('#delete').submit();
+// 	console.log(3);			
+// }
+// };
+
+}

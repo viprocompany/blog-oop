@@ -18,7 +18,8 @@
 		<?php if($isAuth) { ?>
 			<!-- старые ссылки до приведение к человекочитаемым урлам ЧПУ -->
 		<!-- 	<a class="btn btn-outline-warning" href="index.php?c=edit&id_article=<?=$id_article?>">Изменить</a> -->
-			<a class="btn btn-outline-warning" href="<?php echo ROOT?>edit/<?=$id_article?>">Изменить</a>
+			<a class="btn btn-outline-warning" href="<?php echo ROOT?>home/edit/<?=$id_article?>">Изменить</a>
+			 <a class="btn btn-outline-danger"  id="delete" onclick="if (!confirm('Удалить статью:  <?=$message['title'] ?> ?')) return false  " href="<?php echo ROOT?>home/delete/<?=$id_article?>"   >Удалить</a><br>
 		<?php }  ?>        
 	</div>
 	<hr>

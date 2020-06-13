@@ -6,10 +6,9 @@
     <span>Категория новостей: <strong><?=$cat['title_category']?></strong></span> 
    <!--  <span>код категории: </span><strong> <?=$cat['id_category']?></strong> -->
     <?php if($isAuth) { ?>
-          <!-- старые ссылки до приведение к человекочитаемым урлам ЧПУ -->
-     <!--  <a class="btn btn-outline-warning" href="index.php?c=edit-category&id_category=<?=$id_category?>">Изменить</a>
- -->    
-   <a class="btn btn-outline-warning" href="<?php echo ROOT?>category/edit/<?=$id_category?>">Изменить</a>
+      <a class="btn btn-outline-warning" href="<?php echo ROOT?>category/edit/<?=$id_category?>">Изменить</a>
+
+   <a class="btn btn-outline-danger"  id="delete" onclick="if (!confirm('Удалить категорию:  <?=$cat['title_category']?> ?')) return false  " href="<?php echo ROOT?>category/delete/<?=$id_category?>"   >Удалить</a>
     <?php }  ?>    
     <hr>
   <?php }

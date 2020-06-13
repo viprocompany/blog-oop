@@ -51,29 +51,19 @@ abstract class BaseModel
 	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное, передаем в третий параметр константу из класса DBDriver для выборки одной строки 
 	}
 
-
-
 	public function add(array $params)
-	{
-		
+	{		
 		return $this->db->insert($this->table, $params);
 	}
-
 
   	public function edit(array $params,  $id)
   	{
   		return $this->db->update($this->table, $this->id_param, $params, $id);
   	}
 
-
 	public  function deleteById($id)
-	{
-		$sql = sprintf('DELETE FROM  %s  WHERE  %s= :i '  , $this->table, $this->id_param);
-		self::dbQuery($sql,[			
-			'i'=>$id
-	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное
-		]);
-		return ;	
+	{	
+		return  $this->db->delete($this->table, $this->id_param, $id);
 	}
 //проверка наличия ДОБАВЛЯЕМОГO поля УНИВЕРСАЛЬНАЯ
 function correctOrigin($id, $table, $param, $text){

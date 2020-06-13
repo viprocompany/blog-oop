@@ -187,9 +187,14 @@ $images = $img_files;
   } 
   else
   {
+     $this->new_row = $this->build('text-new', [
+        'text_name' => $text_name,
+        'text_content' => $text_content,
+        'id_text' => $id
+      ]);
 //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
 //добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
-    $new_article_id = $mText->add([
+    $new_text_id = $mText->add([
       'text_name'=>$text_name,
        'text_content'=>$text_content,
        'description'=> $description 
@@ -198,6 +203,8 @@ $images = $img_files;
     exit();
   }
 }
+
+
     $this->content = $this->build('add-text', [
       'isAuth' => $isAuth ,
       'text_name' => $text_name,
@@ -211,18 +218,13 @@ $images = $img_files;
 
   public function editAction()
 {
-
 //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
   $isAuth = Auth::isAuth();
 //имя пользователя для вывода в приветствии
   $login = Auth::isName();
   $msg = '';
 //проверка авторизации
-  if(!$isAuth){
-//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
-    $_SESSION['returnUrl'] = ROOT . "user/edit/$id_user";
-    header("Location: " . ROOT . "login");
-  }
+
 //для вызова
   //создаем объект для подключения к базе данных
   $db = DBConnect::getPDO();
@@ -239,7 +241,12 @@ $images = $img_files;
     $description = $text['description'];
         //    проверяем корректность вводимого айдишника
   
-  $this->title .=': ' . $text_name;
+  $this->title .=': ИЗМЕНИТЬ СТАТИКУ:' . $text_name;
+    if(!$isAuth){
+//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
+    $_SESSION['returnUrl'] = ROOT . "user/edit/$id_text";
+    header("Location: " . ROOT . "login");
+  }
     //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
 // $dir_img =  'f:/OpenServer/OSPanel/domains/blog/images';
@@ -253,6 +260,7 @@ $images = $img_files;
   if(!($mText->correctId('text_name', 'texts', 'id_text', $id_text )) || !$id_text)
   { 
     $err404 = true;  
+     $this->title .=' 404';
     $this->content = $this->build('errors', [
     ]);
   }
@@ -316,9 +324,67 @@ $id_new =  $mText->edit(
       'login' => $login
   ]);
  }
-
-
 }
 
+public function deleteAction()
+  { 
+    $db = DBConnect::getPDO();
+$mTexts = new TextsModel(new DBDriver($db));//вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
+
+    $isAuth = Auth::isAuth();
+//имя пользователя для вывода в приветствии
+    $login = Auth::isName();
+    $msg = '';
+//проверка авторизации
+    if(!$isAuth)
+    {
+//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
+    $_SESSION['returnUrl'] = ROOT . "text";
+  // Header('Location: login.php');
+    }
+        //создаем массив сканирую директорию img
+// $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
+// $dir_img =  'f:/OpenServer/OSPanel/domains/blog/assest/img/';
+  $dir_img =  'd:/open-server/OSPanel/domains/blog-oop/assest/img/';
+  $img_files = scandir($dir_img);
+//создаем пустой массив для картинок
+  $images = [];
+  $images = $img_files;
+    $err404 = false;
+
+    $id = $this->request->get('id');
+    $texts = $mTexts->getById($id); 
+    // переопределяем title    
+    $text_name = $texts['text_name'];
+    $text_content = $texts['text_content'];
+    //    проверяем корректность вводимого айдишника   
+    //при добавлении нового категории будет создаваться переменная шаблона для вывода данных о новом авторе , которая далее будет добавлена в массив переменных шаблона v_main
+      if(!($mTexts->correctId('text_name', 'texts', 'id_text', $id )) || !$id)
+  { 
+    $err404 = true;  
+     $this->title .=' 404';
+    $this->content = $this->build('errors', [
+    ]);
+  }
+    else{      
+      $mTexts->deleteById($id);
+      // header("Location: " . ROOT . "user/$id_category");
+      $this->new_row = $this->build('text-delete', [
+        'text_name' => $text_name,
+        'text_content' => $text_content
+      ]); 
+
+  $mTexts = new TextsModel(new DBDriver($db));
+//применяем к объекту метод из его класса
+  $texts = $mTexts->getAll(' text_name ');
+// var_dump($texts);
+  $this->content = $this->build('texts', [
+    'texts' => $texts,
+    'images' => $images,
+    'isAuth' => $isAuth,
+    'login' => $login
+  ]);
+    }
+  }
 
 }

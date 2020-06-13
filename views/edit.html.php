@@ -1,6 +1,15 @@
 
 <?php 
-if($isAuth) { ?>
+
+if($isAuth) {
+	 $id_article =  $post['id_article'];
+		$title= $post['title'];			
+		$id_user = $post['id_user'];
+		$name= $post['name'];
+		$id_category = $post['id_category'];
+		$title_category = $post['title_category'];
+		$content = $post['content'];	
+		$img = $post['img'];	 ?>
 <h4>РЕДАКТИРОВАНИЕ СТАТЬИ</h4>
 <form method="post">	
 	<p><span>Номер статьи: </span><?php  echo $id_article; ?></p>	

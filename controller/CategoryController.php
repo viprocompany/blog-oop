@@ -156,12 +156,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
   //имя пользователя для вывода в приветствии
     $login = Auth::isName();
     $msg = '';
-  //проверка авторизации
-    if(!$isAuth){
-      //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
-      $_SESSION['returnUrl'] = ROOT . "categories/edit/$id";
-      header("Location: " . ROOT . "login");
-    }
+
   //для вызова
     //создаем объект для подключения к базе данных
     $db = DBConnect::getPDO();
@@ -174,7 +169,13 @@ $_SESSION['returnUrl'] = ROOT . "category";
     $title_category = $cat['title_category'];
     $id_category =  $cat['id_category'];
   //    проверяем корректность вводимого айдишника
-    $this->title .=': ИЗМЕНИТЬ: ' . $title_category;
+    $this->title .=': ИЗМЕНИТЬ КАТЕГОРИЮ: ' . $title_category;
+  //проверка авторизации
+    if(!$isAuth){
+      //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
+      $_SESSION['returnUrl'] = ROOT . "category/edit/$id_category";
+      header("Location: " . ROOT . "login");
+    }
 
     if(!($mCat->correctId('title_category', 'categories', 'id_category', $id )) || !$id_category)  { 
       $err404 = true;  
@@ -224,5 +225,53 @@ $_SESSION['returnUrl'] = ROOT . "category";
    }
 
   }
+  public function deleteAction()
+  { 
+    $db = DBConnect::getPDO();
+    $mCategory = new CategoriesModel(new DBDriver(DBConnect::getPDO()));
+//вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
 
+    $isAuth = Auth::isAuth();
+//имя пользователя для вывода в приветствии
+    $login = Auth::isName();
+    $msg = '';
+//проверка авторизации
+    if(!$isAuth)
+    {
+//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
+    $_SESSION['returnUrl'] = ROOT . "category";
+  // Header('Location: login.php');
+    }
+    $err404 = false;
+
+    $id = $this->request->get('id');
+    $cats = $mCategory->getById($id); 
+    // переопределяем title    
+    $title_category = $cats['title_category'];
+    $id_category = $cats['id_category'];
+    //    проверяем корректность вводимого айдишника   
+    //при добавлении нового категории будет создаваться переменная шаблона для вывода данных о новом авторе , которая далее будет добавлена в массив переменных шаблона v_main
+    if(!$mCategory->correctId('title_category', 'categories', 'id_category', $id_category ))
+    { 
+      $err404 = true;  
+      $this->content = $this->build('errors', [
+    ]);
+    }
+    else{      
+
+      $mCategory->deleteById($id);
+      // header("Location: " . ROOT . "category/$id_category");
+      $this->new_row = $this->build('categories-delete', [
+        'title_category' => $title_category,
+        'id_category' => $id_category
+      ]); 
+
+    $categories = $mCategory->getAll(' id_category DESC ');
+    $this->content = $this->build('categories', [
+      'categories' => $categories,
+      'isAuth' => $isAuth,
+      'login' => $login
+    ]);
+    }
+  }
 }
