@@ -2,6 +2,7 @@
 namespace models;
 
 use core\DBDriver;
+use core\Validator;
 
 class  CategoriesModel extends BaseModel
 {
@@ -12,10 +13,46 @@ class  CategoriesModel extends BaseModel
 
 	//задаем поля для запросов, которых нет  в конструкторе
 	protected $title_category = 'title_category';
-	
-	public function __construct(DBDriver $db)
+		protected $validator;
+
+	protected $schema = [
+		// 'id_article' => [
+		// 	'primary' => true
+		// ],
+
+		// 'title' => [
+		// 	'type' => 'string',
+		// 	'length' => [2, 150],
+		// 	'not_blank' => true,
+		// 	'require' => true
+		// ],
+
+		//   'content' => [
+		// 	'type' => 'string',
+		// 	'length' => 'big',
+		// 	'require' => true,
+		// 	'not_blank' => true,
+		// 	'type' => 'integer',
+		// ],
+
+		// 	'id_user' => [
+		// 	'require' => true
+		// ],
+
+		// 	'id_category' => [
+		// 	'require' => true
+		// ],
+
+		// 	'img' => [
+		
+		// ]
+
+
+	];
+
+	public function __construct(DBDriver $db, Validator $validator)
 	{
-		parent::__construct($db, 'categories','id_category');
+		parent::__construct($db,$validator, 'categories','id_category');
 	}
 	
 	public  function addCategory($title_category)

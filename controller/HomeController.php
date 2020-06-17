@@ -1,16 +1,19 @@
 <?php  
 namespace controller;
 
+use models\BaseModel;
 use models\AllTablesModel;
 use models\PostModel;
-use models\BaseModel;
 use models\CategoriesModel;
 use models\UsersModel;
+use models\Helper;
 use core\DBConnect;
 use core\Auth;
 use core\DBDriver;
 use core\Request;
-use models\Helper;
+use core\Templater;
+use core\Validator;
+
 
 class HomeController extends BaseController
 {
@@ -41,7 +44,7 @@ class HomeController extends BaseController
 	//создаем объект для подключения к базе данных
 		$db = DBConnect::getPDO();
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-		$mAllTables = new AllTablesModel(new DBDriver(DBConnect::getPDO()));
+		$mAllTables = new AllTablesModel(new DBDriver(DBConnect::getPDO()), new Validator());
 //применяем к объекту метод из его класса
 		
 		$posts = $mAllTables->getAll(' date DESC');
@@ -84,7 +87,7 @@ class HomeController extends BaseController
 
 		$db = DBConnect::getPDO();
 		//создаем объект класса AllTablesModel и в параметре подключаем драйвер(обёртка) DBDriver для запросов к базе данных внутри которой задан параметр-подключение к базе данных $db = DBConnect::getPDO()
-		$mAllTables = new AllTablesModel(new DBDriver(DBConnect::getPDO()));
+		$mAllTables = new AllTablesModel(new DBDriver(DBConnect::getPDO()), new Validator());
 
 		$err404 = false;
 
@@ -93,16 +96,18 @@ class HomeController extends BaseController
 		$post = $mAllTables->getById($id); 
 		// переопределяем title		
 		// var_dump($post);
-		$title_post = $post['title'];		
+		$title_post = $post['title'];	
+		$id_article = $id ;
 		$this->title .=': ' . $title_post;
 
-		if(!($mAllTables->correctId('title', 'article', 'id_article', $id )))
+		if(!($mAllTables->correctId('title', 'article', 'id_article', $id_article )))
 		{ 
-			$err404 = true;  
+			$err404 = true;  			
 			$this->content = $this->build('errors', [
 			]);
 		}
 		else{
+			
 			$this->content = $this->build('post', [
 				'posts' => $post,
 				'isAuth' => $isAuth,			
@@ -114,7 +119,7 @@ class HomeController extends BaseController
 	public function addAction()
 	{
 		// переопределяем title
-		$this->title .=': НОВАЯ СТАТЬЯ';
+		$this->title .=': ДОБАВИТЬ ПОСТ';
 	    //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
 		$isAuth = Auth::isAuth();
 //имя пользователя для вывода в приветствии
@@ -139,15 +144,18 @@ class HomeController extends BaseController
 	//создаем объект для подключения к базе данных
 		$db = DBConnect::getPDO();
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-		$mUser = new UsersModel(new DBDriver(DBConnect::getPDO()));
+ 	$mPost = new PostModel(
+				new DBDriver(DBConnect::getPDO()),
+				new Validator()
+			);
+ 	
+		$mUser = new UsersModel(new DBDriver(DBConnect::getPDO()), new Validator());
 	//задаем массив для дальнейшего вывода фамилий авторов в разметке через опшины селекта, после выбора автора из значения опшина подтянется айдишник автора для дальнейшего добавления в статью
 		$names= $mUser->getAll(' name');
 	 // $names = $query->fetchAll();	
-		$mCategory = new CategoriesModel(new DBDriver(DBConnect::getPDO()));
+		$mCategory = new CategoriesModel(new DBDriver(DBConnect::getPDO()), new Validator());
 //задаем массив для дальнейшего вывода категорий новостей в разметке через опшины селекта, после выбора категории из значения опшина подтянется айдишник категории для дальнейшего добавления в статью
 		$categories= $mCategory->getAll(' title_category');
-
-		$mPost = new PostModel(new DBDriver(DBConnect::getPDO()));
 
 //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
@@ -209,10 +217,11 @@ class HomeController extends BaseController
 					'id_user' => $id_user,
 					'id_category' => $id_category,
 					'img' => $img
-				]);	
-
-				header("Location: " . ROOT . "home/$new_article_id");
-				exit();
+				]);
+				// header("Location: " . ROOT . "home/$new_article_id");
+				// exit();
+				//переадресация через функцию
+				$this->redirect(sprintf('/home/%s', $new_article_id));
 			}
 		}
 		else{
@@ -248,7 +257,7 @@ class HomeController extends BaseController
 		$db = DBConnect::getPDO();
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
 		
-		$mPost = new AllTablesModel(new DBDriver(DBConnect::getPDO()));
+		$mPost = new AllTablesModel(new DBDriver(DBConnect::getPDO()), new Validator());
 		$id = $this->request->get('id');
   //задаем массив для дальнейшего вывода фамилий авторов в разметке через опшины селекта, после выбора автора из значения опшина подтянется айдишник автора для дальнейшего добавления в статью
 		$post = $mPost->getById($id);  
@@ -263,10 +272,10 @@ class HomeController extends BaseController
 			header("Location: " . ROOT . "login");
 		}
 //задаем массив для дальнейшего вывода фамилий авторов в разметке через опшины селекта, после выбора автора из значения опшина подтянется айдишник автора для дальнейшего добавления в статью
-	$mUser = new UsersModel(new DBDriver(DBConnect::getPDO()));
+	$mUser = new UsersModel(new DBDriver(DBConnect::getPDO()), new Validator());
 	$names= $mUser->getAll(' name');	
 	 //задаем массив для дальнейшего вывода категорий новостей в разметке через опшины селекта, после выбора категории из значения опшина подтянется айдишник категории для дальнейшего добавления в статью
-	$mCategory = new CategoriesModel(new DBDriver(DBConnect::getPDO()));
+	$mCategory = new CategoriesModel(new DBDriver(DBConnect::getPDO()), new Validator());
 	$categories = $mCategory->getAll('title_category ASC');
     //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
@@ -332,7 +341,7 @@ class HomeController extends BaseController
 		}	
 		else
 		{
-			$mPost_new = new PostModel(new DBDriver(DBConnect::getPDO()));
+			$mPost_new = new PostModel(new DBDriver(DBConnect::getPDO()), new Validator());
   // не работает показ последнего введенного айдишника в функции edit
 			$id_new =  $mPost_new->edit(
 				[
@@ -363,7 +372,7 @@ class HomeController extends BaseController
 public function deleteAction()
   { 
     $db = DBConnect::getPDO();
-    $mAllTables = new AllTablesModel(new DBDriver(DBConnect::getPDO()));
+    $mAllTables = new AllTablesModel(new DBDriver(DBConnect::getPDO()), new Validator());
 //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
     $isAuth = Auth::isAuth();
 //имя пользователя для вывода в приветствии
@@ -383,7 +392,7 @@ public function deleteAction()
     $title = $post_old['title'];
     $name = $post_old['name'];
 //объект однотабличного класса статьи в запрос об удалении из таблицы
-    $mPost = new PostModel(new DBDriver(DBConnect::getPDO()));
+    $mPost = new PostModel(new DBDriver(DBConnect::getPDO()), new Validator());
     //    проверяем корректность вводимого айдишника   удаляемой статьи
       if(!($mPost->correctId('title', 'article', 'id_article', $id )) || !$id)
   { 

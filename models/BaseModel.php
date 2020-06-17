@@ -2,18 +2,22 @@
 namespace models;
 
 use core\DBDriver;
+use core\Validator;
 
 abstract class BaseModel
 {
 	protected $db;
 	protected $table;
 	protected $id_param;
+	protected $validator;
 
-	public function __construct( DBDriver $db, $table='', $id_param='')
+	public function __construct( DBDriver $db, Validator $validator, $table='', $id_param='')
 	{
 		$this->db = $db;
+		$this->validator = $validator;
 		$this->table = $table;
 		$this->id_param = $id_param;
+
 	}
 
 //проверка запроса на ошибки в теле запроса, используем константу безошибочности PDO::ERR_NONE, которая равна 00000, и будет сравниваться с массивом по разбору возможных ошибок. константу вместо её значения 00000 используем потому, что с обновлением версии PHP её значение может измениться на другое.
@@ -23,17 +27,6 @@ abstract class BaseModel
 		if($info[0] != \PDO::ERR_NONE){
 			exit($info[2]);
 		}
-	}
-
-//функция работы с запросом, в параметре передается тело запроса и параметры для подстановки в тело запроса в виде массива(по умолчанию пустой, и поэтому не всегда указывается )
-	public	function dbQuery($sql, $params = []){
-//подготовка запроса
-		$stmt = $this->db->prepare($sql);
-//готовый выполненный запрос с параметрами , который можно впоследствии выводить для SELECT с помощью fetch , fetchAll
-		$stmt->execute($params);
-//проверка тела запроса на ошибки с помощью функции db_check_error
-		self::check_error($stmt); 
-		return $stmt;
 	}
 
 	public function getAll($order)
@@ -53,6 +46,14 @@ abstract class BaseModel
 
 	public function add(array $params)
 	{		
+		//обращаемся к валидатору через функцию его класса  execute, которая проверяет соответствие полей заданной СХЕМЕ
+			$this->validator->execute($params);
+//если валидация прошла неуспешно выводим ошибку 
+		if (!$this->validator->success) {
+			// обработать ошибку
+			$this->validator->errors;
+		}
+
 		return $this->db->insert($this->table, $params);
 	}
 
@@ -93,5 +94,14 @@ function correctId($text, $table, $param, $id ){
 	}
 	return true;
 }
-
+// //функция работы с запросом, в параметре передается тело запроса и параметры для подстановки в тело запроса в виде массива(по умолчанию пустой, и поэтому не всегда указывается )
+// 	public	function dbQuery($sql, $params = []){
+// //подготовка запроса
+// 		$stmt = $this->db->prepare($sql);
+// //готовый выполненный запрос с параметрами , который можно впоследствии выводить для SELECT с помощью fetch , fetchAll
+// 		$stmt->execute($params);
+// //проверка тела запроса на ошибки с помощью функции db_check_error
+// 		self::check_error($stmt); 
+// 		return $stmt;
+// 	}
 }

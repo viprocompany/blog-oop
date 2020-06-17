@@ -2,6 +2,7 @@
 namespace models;
 
 use core\DBDriver;
+use core\Validator;
 
 class  UsersModel extends BaseModel
 {
@@ -12,10 +13,46 @@ class  UsersModel extends BaseModel
 
 	//задаем поля для запросов, которых нет  в конструкторе
 	protected $name = 'name';
+protected $validator;
+	protected $schema = [
+		// 'id_article' => [
+		// 	'primary' => true
+		// ],
 
-	public function __construct(DBDriver $db)
+		// 'title' => [
+		// 	'type' => 'string',
+		// 	'length' => [2, 150],
+		// 	'not_blank' => true,
+		// 	'require' => true
+		// ],
+
+		//   'content' => [
+		// 	'type' => 'string',
+		// 	'length' => 'big',
+		// 	'require' => true,
+		// 	'not_blank' => true,
+		// 	'type' => 'integer',
+		// ],
+
+		// 	'name' => [
+		// 	'require' => true
+		// ],
+
+		// 	'title_category' => [
+		// 	'require' => true
+		// ],
+
+		// 	'img' => [
+		
+		// ]
+
+
+	];
+
+public function __construct(DBDriver $db, Validator $validator)
 	{
-		parent::__construct($db, 'users','id_user');
+		parent::__construct($db,$validator, 'users','id_user');
+		$this->validator->setRules($this->schema);
 	}
 	
 //создание статьи путем вставки запроса и массива значений для подстановки в запрос С ПОЛУЧЕНИЕМ ЗНАЧЕНИЯ ПОСЛЕДНЕГО ВВЕДЕННОГО АЙДИШНИКА

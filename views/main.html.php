@@ -40,6 +40,7 @@
 					</p> -->
 				</div>
 				<div class="column">   
+					<?php echo $title_2; ?>
 					<?php echo $error; ?>
 					<?php echo $content;?>
 									</div>	
@@ -61,6 +62,8 @@
 							<div class="row" id="face">
 								<p><a href="#">torgovy_object</a></p>
 							</div>
+									<img src="<?php echo ROOT?>assest/img/<?php echo $fb;?>" alt="<?php echo $fb;?>" >
+							<!-- <?php echo $fb;?> -->
 						</div>	
 					</div>
 					<div class="col-12"> 

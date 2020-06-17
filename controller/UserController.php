@@ -7,6 +7,7 @@ use core\Auth;
 use core\Request;
 use core\DBDriver;
 use models\Helper;
+use core\Validator;
 
 class UserController extends BaseController
 {
@@ -31,7 +32,7 @@ class UserController extends BaseController
 	//создаем объект для подключения к базе данных
   $db = DBConnect::getPDO();
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-  $mUsers = new UsersModel(new DBDriver(DBConnect::getPDO()));
+  $mUsers = new UsersModel(new DBDriver(DBConnect::getPDO()),new Validator());
 //применяем к объекту метод из его класса
   $users = $mUsers->getAll(' name ');
 // var_dump($users);
@@ -46,7 +47,7 @@ class UserController extends BaseController
 public function oneAction()
 { 
  $db = DBConnect::getPDO();
- $mUser = new UsersModel(new DBDriver(DBConnect::getPDO()));
+ $mUser = new UsersModel(new DBDriver(DBConnect::getPDO()),new Validator());
  //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
  $isAuth = Auth::isAuth();
 //имя пользователя для вывода в приветствии
@@ -114,7 +115,7 @@ public function addAction()
 //создаем объект для подключения к базе данных
   $db = DBConnect::getPDO();
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-  $mUser = new UsersModel(new DBDriver(DBConnect::getPDO()));
+  $mUser = new UsersModel(new DBDriver(DBConnect::getPDO()),new Validator());
 //получение параметров с формы методом пост
   if($this->request->isPost()){
   // if(count($_POST) > 0){
@@ -166,7 +167,7 @@ public function editAction()
   //создаем объект для подключения к базе данных
   $db = DBConnect::getPDO();
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-  $mUser = new UsersModel(new DBDriver($db ));
+  $mUser = new UsersModel(new DBDriver(DBConnect::getPDO()),new Validator());
   $id = $this->request->get('id');
   //задаем массив для дальнейшего вывода фамилий авторов в разметке через опшины селекта, после выбора автора из значения опшина подтянется айдишник автора для дальнейшего добавления в статью
   $users = $mUser->getById($id); 
@@ -233,7 +234,7 @@ public function editAction()
 public function deleteAction()
   { 
     $db = DBConnect::getPDO();
- $mUser = new UsersModel(new DBDriver($db ));
+ $mUser = new UsersModel(new DBDriver(DBConnect::getPDO()),new Validator());
 //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
 
     $isAuth = Auth::isAuth();

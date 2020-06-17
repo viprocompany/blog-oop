@@ -3,6 +3,10 @@ namespace controller;
 
 use core\Auth;
 use core\Request;
+// use core\DBConnect;
+// use core\DBDriver;
+use core\Templater;
+use models\TextsModel;
 
 class BaseController
 {
@@ -15,6 +19,7 @@ class BaseController
     $this->request = $request;
     $this->title = 'PHP 2 :';
     $this->content = '';
+    // $this->statica = '';
   }
 
   protected function  build($template, $params =[])
@@ -46,6 +51,11 @@ class BaseController
         'login' => $login
         // ,        'msg' => $msg
       ]); 
+     
+     //рпринимаем массив статических значений для граыики разметки из еласса ТЕКСТ. аналог админки по выбору картинок и заголовков
+  $statica = Templater::statica();
+  // var_dump($statica);
+
     echo $this->build('main',
       [
         'title' => $this->title,
@@ -53,11 +63,25 @@ class BaseController
         'new_row' => $this->new_row,
         'auth'=> $inner_auth,
         'error' => $error,
-        'title_1' => $title_1,
         'isAuth' => $isAuth,
-        'image_footer' => $image_footer,
+        // 'image_footer' => $image_footer,
+        // 'image_header' => $image_header,
+        // '$image_mail' => $image_mail,
+        // '$instagram' => $instagram,
+        // '$vk' => $vk,
+        // 'fb' => '$fb',
+        // 'title_1' => $title_1,
+        // 'title_2' => $title_2,
         'login' => $login
+        // , $statica
       ]);
+  }
+  //функция переадресации с указанием статуса 302-найдено, для роботов
+    protected function redirect($uri)
+  {
+    header('Status: 302 Found');
+    header(sprintf('Location: %s', $uri));
+    exit();
   }
 
 }

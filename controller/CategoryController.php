@@ -7,7 +7,7 @@ use core\Auth;
 use core\Request;
 use core\DBDriver;
 use models\Helper;
-
+use core\Validator;
 
 class CategoryController extends BaseController
 {
@@ -30,7 +30,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
 	//создаем объект для подключения к базе данных
 	$db = DBConnect::getPDO();
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-	$mCat = new CategoriesModel(new DBDriver(DBConnect::getPDO()));
+	$mCat = new CategoriesModel(new DBDriver(DBConnect::getPDO()),new Validator());
 //применяем к объекту метод из его класса
 	$categories = $mCat->getAll(' title_category ');
 	
@@ -45,7 +45,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
   public function oneAction()
   { 
     $db = DBConnect::getPDO();
-    $mCategory = new CategoriesModel(new DBDriver(DBConnect::getPDO()));
+    $mCategory = new CategoriesModel(new DBDriver(DBConnect::getPDO()),new Validator());
 //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
     $isAuth = Auth::isAuth();
 //имя пользователя для вывода в приветствии
@@ -112,7 +112,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
   //создаем объект для подключения к базе данных
     $db = DBConnect::getPDO();
     //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-    $mCat = new CategoriesModel(new DBDriver($db ));
+    $mCat = new CategoriesModel(new DBDriver(DBConnect::getPDO()),new Validator());
       //получение параметров с формы методом пост
     if($this->request->isPost()){
       $err404 = false;
@@ -161,7 +161,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
     //создаем объект для подключения к базе данных
     $db = DBConnect::getPDO();
   //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-    $mCat = new CategoriesModel(new DBDriver($db ));
+    $mCat = new CategoriesModel(new DBDriver(DBConnect::getPDO()),new Validator());
     $id = $this->request->get('id');
     //задаем массив для дальнейшего вывода фамилий авторов в разметке через опшины селекта, после выбора автора из значения опшина подтянется айдишник автора для дальнейшего добавления в статью
     $cat = $mCat->getById($id); 
@@ -228,7 +228,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
   public function deleteAction()
   { 
     $db = DBConnect::getPDO();
-    $mCategory = new CategoriesModel(new DBDriver(DBConnect::getPDO()));
+    $mCategory = new CategoriesModel(new DBDriver(DBConnect::getPDO()),new Validator());
 //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
 
     $isAuth = Auth::isAuth();

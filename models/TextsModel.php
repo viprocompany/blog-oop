@@ -2,6 +2,7 @@
 namespace models;
 
 use core\DBDriver;
+use core\Validator;
 
 class TextsModel extends BaseModel
 {		//эти поля заданы в базовом в классе и задааются через конструктор
@@ -13,10 +14,46 @@ class TextsModel extends BaseModel
 	protected $text_name = 'text_name';	
 	protected $text_content = 'text_content';
 	protected $description = 'description';
+protected $validator;
+	protected $schema = [
+		// 'id_article' => [
+		// 	'primary' => true
+		// ],
 
-	public function __construct(DBDriver $db)
+		// 'title' => [
+		// 	'type' => 'string',
+		// 	'length' => [2, 150],
+		// 	'not_blank' => true,
+		// 	'require' => true
+		// ],
+
+		//   'content' => [
+		// 	'type' => 'string',
+		// 	'length' => 'big',
+		// 	'require' => true,
+		// 	'not_blank' => true,
+		// 	'type' => 'integer',
+		// ],
+
+		// 	'name' => [
+		// 	'require' => true
+		// ],
+
+		// 	'title_category' => [
+		// 	'require' => true
+		// ],
+
+		// 	'img' => [
+		
+		// ]
+
+
+	];
+
+	public function __construct(DBDriver $db, Validator $validator)
 	{
-		parent::__construct($db, 'texts','id_text');
+		parent::__construct($db,$validator, 'texts','id_text');
+		$this->validator->setRules($this->schema);
 	}	
 
 		public  function addText($text_name, $text_content, $description)

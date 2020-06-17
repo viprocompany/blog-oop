@@ -8,6 +8,7 @@ use core\Auth;
 use core\Request;
 use core\DBDriver;
 use models\Helper;
+use core\Validator;
 
 class TextController extends BaseController
 {
@@ -42,7 +43,7 @@ class TextController extends BaseController
 	//создаем объект для подключения к базе данных
   $db = DBConnect::getPDO();
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-  $mTexts = new TextsModel(new DBDriver($db));
+  $mTexts = new TextsModel(new DBDriver($db),new Validator());
 //применяем к объекту метод из его класса
   $texts = $mTexts->getAll(' text_name ');
 // var_dump($users);
@@ -57,7 +58,7 @@ class TextController extends BaseController
 public function oneAction()
 { 
   $db = DBConnect::getPDO();
-  $mText = new TextsModel(new DBDriver($db));
+  $mText = new TextsModel(new DBDriver($db),new Validator());
 
 //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
   $isAuth = Auth::isAuth();
@@ -145,12 +146,12 @@ public function addAction()
 //создаем объект для подключения к базе данных
   $db = DBConnect::getPDO();
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
-  $mText = new TextsModel(new DBDriver(DBConnect::getPDO()));
+  $mText = new TextsModel(new DBDriver(DBConnect::getPDO()),new Validator());
 
   //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
 // $dir_img =  'f:/OpenServer/OSPanel/domains/blog/images';
-$dir_img =  'd:/open-server/OSPanel/domains/blog-oop/images';
+$dir_img =  'd:/open-server/OSPanel/domains/blog-oop/assest/img';
    
 $img_files = scandir($dir_img);
 //создаем пустой массив для картинок
@@ -229,7 +230,7 @@ $images = $img_files;
   //создаем объект для подключения к базе данных
   $db = DBConnect::getPDO();
 //создаем новый объект класса ArticleModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
- $mText = new TextsModel(new DBDriver(DBConnect::getPDO()));
+ $mText = new TextsModel(new DBDriver(DBConnect::getPDO()),new Validator());
   $id = $this->request->get('id');
   //задаем массив для дальнейшего вывода фамилий авторов в разметке через опшины селекта, после выбора автора из значения опшина подтянется айдишник автора для дальнейшего добавления в статью
    $text = $mText->getById($id); 
@@ -250,7 +251,7 @@ $images = $img_files;
     //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
 // $dir_img =  'f:/OpenServer/OSPanel/domains/blog/images';
-$dir_img =  'd:/open-server/OSPanel/domains/blog-oop/images';
+$dir_img =  'd:/open-server/OSPanel/domains/blog-oop/assest/img';
    
 $img_files = scandir($dir_img);
 //создаем пустой массив для картинок
@@ -329,7 +330,8 @@ $id_new =  $mText->edit(
 public function deleteAction()
   { 
     $db = DBConnect::getPDO();
-$mTexts = new TextsModel(new DBDriver($db));//вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
+$mTexts = new TextsModel(new DBDriver($db),new Validator());
+//вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
 
     $isAuth = Auth::isAuth();
 //имя пользователя для вывода в приветствии
@@ -374,7 +376,7 @@ $mTexts = new TextsModel(new DBDriver($db));//вводим переменную 
         'text_content' => $text_content
       ]); 
 
-  $mTexts = new TextsModel(new DBDriver($db));
+  $mTexts = new TextsModel(new DBDriver($db),new Validator());
 //применяем к объекту метод из его класса
   $texts = $mTexts->getAll(' text_name ');
 // var_dump($texts);
