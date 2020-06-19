@@ -245,7 +245,7 @@ $images = $img_files;
   $this->title .=': ИЗМЕНИТЬ СТАТИКУ:' . $text_name;
     if(!$isAuth){
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
-    $_SESSION['returnUrl'] = ROOT . "user/edit/$id_text";
+    $_SESSION['returnUrl'] = ROOT . "text/edit/$id_text";
     header("Location: " . ROOT . "login");
   }
     //создаем массив сканирую директорию img

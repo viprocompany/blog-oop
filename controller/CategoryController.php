@@ -209,7 +209,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
         else {
        //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
         //добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
-         $mCat->edit(  'title_category' , $title_category_new, $id); 
+         $mCat->edit(  ['title_category' => $title_category_new], $id); 
          header("Location: " . ROOT . "category/$id");
          exit();
        }

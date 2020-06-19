@@ -1,24 +1,39 @@
 <?php if($isAuth) { ?>
   <h3>РЕДАКТИРОВАТЬ ТЕКСТ</h3>
   <hr>
-  <form method="post">
-    ИМЯ <br>
-    <input type="text" name="text_name" value="<?php  echo $text_name; ?>"><br>
-    ТЕКСТ: <br>
-    <input type="text" name="text_content" value="<?php  echo $text_content; ?>"><br>
-    (просмотр папки с файлами изображений)<br>
-    <select name="img_content" class="img inp" >
-      <?php foreach ($images as $f) {   
-      $images[] = $f;?>
-      <option value="<?php echo $f ?>">
-        <?php  echo $f?>        
-      </option>
-  <?php } ?> 
-  </select><br>
+  <form method="post" class="form form_add_text">
+      <div class="line">
+      <label class="label" >
+        <span class="title" for="name">Название</span>      <input type="text" name="text_name" class="inp" value="<?php  echo $text_name; ?>">
+      </label><br>
+    </div>
+      <div class="line">
+        <label class="label" >
+          <span class="title" for="name">Текст</span>   
+    <input type="text" name="text_content" class="inp" value="<?php  echo $text_content; ?>"><br>
+    </label><br>
+    </div>
+<div class="line">
+      <label class="label" >
+        <span class="title" for="name">(просмотр папки с файлами изображений)</span>  
+        <select name="img_content" class="img inp" >
+          <?php foreach ($images as $f) {   
+            $images[] = $f;?>
+            <option value="<?php echo $f ?>">
+              <?php  echo $f?>        
+            </option>
+          <?php } ?> 
+        </select>
+      </label><br>
+    </div>
 <!--     <input type="text" name="img_content" value="<?php  echo $img_content; ?>"><br> -->
-    ОПИСАНИЕ: <br>
-    <textarea  name="description" ><?php  echo $description; ?></textarea><br>
-    <input class="btn btn-success" type="submit" value="Добавить">
+        <div class="line">
+      <label class="label" >
+        <span class="title" for="name">Описание</span>     
+        <textarea  name="description" class="inp" ><?php  echo $description; ?></textarea>
+      </label><br>
+    </div>
+    <input class="btn btn-success" type="submit" id="btn" value="Применить">
 
   </form> 
 <?php }?>

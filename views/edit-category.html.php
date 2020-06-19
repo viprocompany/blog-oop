@@ -2,10 +2,14 @@
 if($isAuth)
 {  ?>
   <h4>РЕДАКТИРОВАТЬ КАТЕГОРИЮ</h4>
-  <form method="post">  
+  <form method="post" class="form form_add_category">  
     <p><span>Номер категории: </span><?php  echo $id_category; ?></p> 
-    название<br>
-    <input type="text" name="title_category" value="<?php  echo $title_category; ?>"><br>
+	<div class="line">
+	<label class="label" >
+		<span class="title" for="name">Название категории</span>	  
+  <input type="text" name="title_category" class="inp"  value="<?php  echo $title_category; ?>">
+  	</label><br>
+</div>
     <input class="btn btn-success" type="submit" value="Применить">
   </form>
 <?php }?>

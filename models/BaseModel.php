@@ -17,9 +17,7 @@ abstract class BaseModel
 		$this->validator = $validator;
 		$this->table = $table;
 		$this->id_param = $id_param;
-
 	}
-
 //проверка запроса на ошибки в теле запроса, используем константу безошибочности PDO::ERR_NONE, которая равна 00000, и будет сравниваться с массивом по разбору возможных ошибок. константу вместо её значения 00000 используем потому, что с обновлением версии PHP её значение может измениться на другое.
 	public static function check_error($query){
 		$info = $query->errorInfo();
@@ -52,6 +50,7 @@ abstract class BaseModel
 		if (!$this->validator->success) {
 			// обработать ошибку
 			$this->validator->errors;
+			// die;
 		}
 
 		return $this->db->insert($this->table, $params);
@@ -79,7 +78,6 @@ function correctOrigin($id, $table, $param, $text){
 	}
 	return true;
 }
-
 //УНИВЕРСАЛЬНАЯ проверка корректности получаемого айдишника сущности, то есть его наличие
 function correctId($text, $table, $param, $id ){
 	//получаем массив айдишников категории новости

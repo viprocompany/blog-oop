@@ -96,18 +96,23 @@ class HomeController extends BaseController
 		$post = $mAllTables->getById($id); 
 		// переопределяем title		
 		// var_dump($post);
-		$title_post = $post['title'];	
-		$id_article = $id ;
+		$title_post = $post['title'];			
 		$this->title .=': ' . $title_post;
 
-		if(!($mAllTables->correctId('title', 'article', 'id_article', $id_article )))
+		//перестало работать
+//объект однотабличного класса статьи в запрос об удалении из таблицы
+    // $mPost = new PostModel(new DBDriver(DBConnect::getPDO()), new Validator());
+		 // if(!($mPost->correctId('title', 'article', 'id_article', $id )) || !$id)
+		//вместо верхней проверки через функцию работает только эта 
+		if(!$post  || !preg_match("/^[a-zA-Z0-9_-]+$/",$id))
 		{ 
+			// echo 'NO';
 			$err404 = true;  			
 			$this->content = $this->build('errors', [
 			]);
 		}
 		else{
-			
+			// echo 'YES';
 			$this->content = $this->build('post', [
 				'posts' => $post,
 				'isAuth' => $isAuth,			
@@ -124,16 +129,13 @@ class HomeController extends BaseController
 		$isAuth = Auth::isAuth();
 //имя пользователя для вывода в приветствии
 		$login = Auth::isName();
-
 		$msg = '';
-
 		$title = "";
 		$id_user = "";
 		$name = "";
 		$id_category = "";
 		$content = "";
 		$img = "";
-
 //проверка авторизации
 		if(!$isAuth){
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
@@ -161,54 +163,59 @@ class HomeController extends BaseController
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
 // $dir_img =  'f:/OpenServer/OSPanel/domains/blog/images';
 		$dir_img =  'd:/open-server/OSPanel/domains/blog-oop/images';
-
 		$img_files = scandir($dir_img);
 //создаем пустой массив для картинок
 		$images = [];
 		$images = $img_files;
-
 //получение параметров с формы методом пост
 // if(count($_POST) > 0){
 // аналогично  спомощью функции isPost, если использован метод ПОСТ , то данные берутся с формы и ичпользуются дальше
 		$method = new Request($_GET, $_POST, $_SERVER, $_COOKIE, $_TITLE, $_SESSION);
-
 		// if($method->isPost()){
-
 		if($this->request->isPost()){
 	// айдишник получаем из значения value опшина после того как в выпадающем списке был выбран автор 
-			$id_user = trim($_POST['name']);	
 			$title = trim($_POST['title']);
+			$id_user = trim($_POST['user']);	
 			$content = trim($_POST['content']);
-			$id_category = trim($_POST['id_category']);
+			$id_category = trim($_POST['category']);
 			$img = trim($_POST['image']);
 
-//проверяем корректность вводимого названия 
-			if(!(Helper::newCorrectTitle($title)))			{		
-				$msg = Helper::errors();		
-			}	
+
+
 	//проверяем корректность вводимого названия 
-			elseif($title == '')			{		
+			if($title == '')			{		
 				$msg = 'Заполните название!';
 			}	
-	// проверка названия на незанятость вводимого названия 
-			elseif (!($mPost->correctOrigin('id_article', 'article', 'title', $title))) 			{
-				$msg = Helper::errors();
+// //проверяем корректность вводимого названия 
+// 			elseif(!(Helper::newCorrectTitle($title))){		
+// 				$msg = Helper::errors();		
+// 			}	
 
-		// $msg = 'Название занято!';
-			}
- //проверяем корректность вводимого айдишника автора
-			elseif(!($mUser->correctId('name', 'users', 'id_user', $id_user )))			{   
-				$msg = 'Неверный код автора';
-			}	
-//проверяем корректность вводимого айдишника категории новости
-			elseif(!$mCategory->correctId('title_category', 'categories', 'id_category', $id_category ))			{   
-				$msg = 'Неверный код категории новости';
-			}
-//проверяем корректность вводимого контента 
-			elseif(!(Helper::correctContent($content))){
-				$msg = Helper::errors();
-			}	
+// 	// проверка названия на незанятость вводимого названия 
+// 			 elseif (!($mPost->correctOrigin('id_article', 'article', 'title', $title))) 			{
+// 				$msg = Helper::errors();
+
+// 		// $msg = 'Название занято!';
+// 			}
+//  //проверяем корректность вводимого айдишника автора
+// 			elseif(!($mUser->correctId('name', 'users', 'id_user', $id_user )))			{   
+// 				$msg = 'Неверный код автора';
+// 			}	
+// //проверяем корректность вводимого айдишника категории новости
+// 			elseif(!$mCategory->correctId('title_category', 'categories', 'id_category', $id_category ))			{   
+// 				$msg = 'Неверный код категории новости';
+// 			}
+
+// //проверяем корректность вводимого контента 
+// 			elseif(!(Helper::correctContent($content))){
+// 				$msg = Helper::errors();
+// 			}	
+
+
+
 			else{
+// цифра для JSCRIPT 
+			// echo '1';
 //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
 //добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
 				$new_article_id = $mPost->add([
@@ -218,11 +225,12 @@ class HomeController extends BaseController
 					'id_category' => $id_category,
 					'img' => $img
 				]);
+
 				// header("Location: " . ROOT . "home/$new_article_id");
 				// exit();
 				//переадресация через функцию
 				$this->redirect(sprintf('/home/%s', $new_article_id));
-			}
+				}
 		}
 		else{
 //если данные в инпуты не вводились, задаем пустые значения инпутов формы для того чтобы через РНР вставки в разметке кода не выскакивали(на странице в полях инпутов для заполнения) нотации об отсутствии данных в переменных $title и $content

@@ -17,22 +17,27 @@ class PostModel extends BaseModel
 		],
 		'title' => [
 			'type' => 'string',
-			'length' => [5, 150],
+			'length' => [3, 100],
 			'not_blank' => true,
-			'require' => true
+			'require' => true,
+			'correct' => 'title'
+
 		],
 		  'content' => [
 			'type' => 'string',
-			'length' => 'big',
+			'length' => [100, 20000],
+			'require' => true,
+			'not_blank' => true,
+			'correct' => 'content'
+			
+		],
+			'id_user' => [
 			'require' => true,
 			'not_blank' => true,
 			'type' => 'integer'
 		],
-			'id_user' => [
-			'require' => true,
-			'type' => 'integer'
-		],
 			'id_category' => [
+			'not_blank' => true,
 			'require' => true,
 			'type' => 'integer'
 		],
