@@ -8,6 +8,7 @@ use core\Request;
 use core\DBDriver;
 use models\Helper;
 use core\Validator;
+use core\Exception\IncorrectDataException;
 
 class CategoryController extends BaseController
 {
@@ -58,12 +59,11 @@ $_SESSION['returnUrl'] = ROOT . "category";
       $_SESSION['returnUrl'] = ROOT . "category/$id_category";
   // Header('Location: login.php');
     }
-    $err404 = false;
 
     $id = $this->request->get('id');
     $cats = $mCategory->getById($id); 
     // переопределяем title    
-      $title_category = $cats['title_category'];
+    $title_category = $cats['title_category'];
         //    проверяем корректность вводимого айдишника
    
     $this->title .=': ' . $title_category;
@@ -75,7 +75,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
     ]);
     }
     else{
-          $this->new_row = $this->build('categories-new', [
+      $this->new_row = $this->build('categories-new', [
       'title_category' => $title_category,
       'id_category' => $id
     ]);
@@ -115,30 +115,26 @@ $_SESSION['returnUrl'] = ROOT . "category";
     $mCat = new CategoriesModel(new DBDriver(DBConnect::getPDO()),new Validator());
       //получение параметров с формы методом пост
     if($this->request->isPost()){
-      $err404 = false;
+
       $title_category = trim($_POST['title_category']);
-    //проверяем  название на пустоту
-      if($title_category == '')    {  
-        $err404 = true; 
-        $msg = 'Заполните имя!';
-      } 
-       //проверяем корректность вводимого названия 
-      elseif(!(Helper::correctName($title_category)))    { 
-        $err404 = true;  
-        $msg = Helper::errors();   
-      } 
+
       //проверка названия на незанятость вводимого названия
-      elseif(!($mCat->correctOrigin('id_category', 'categories', 'title_category', $title_category))){   
-        $err404 = true;
+      if(!($mCat->correctOrigin('id_category', 'categories', 'title_category', $title_category))){           
         $msg = 'Название занято';        
       }    
       else
       {
+        try{
         //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
        //добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
-        $new_id_category = $mCat->add(['title_category'=>$title_category]);  
-        header("Location: " . ROOT . "category/$new_id_category");
-        exit();
+          $new_id_category = $mCat->add(['title_category'=>$title_category]);  
+          header("Location: " . ROOT . "category/$new_id_category");
+          exit();
+        } catch (IncorrectDataException $e) {
+          //обрабатываем исключения брошенные в методе add/insert BaseModel и выводим ошибку в представлении с помощью метода getErrors класса  IncorrectDataException
+          $msg = [];
+          $msg = ($e->getErrors());
+        }   
       }
     }
     $this->content = $this->build('add-category', [
@@ -185,35 +181,29 @@ $_SESSION['returnUrl'] = ROOT . "category";
     else{
         //получение параметров с формы методом пост
       if($this->request->isPost()){
-      // if(count($_POST) > 0){
-        $err404 = false;
-        $title_category_new = trim($_POST['title_category']);
-        // echo   $name_new;
-          //проверяем  название на пустоту
-        if($title_category_new == '')    {  
-          $err404 = true; 
-          $msg = 'Заполните имя!';
 
-        } 
-         //проверяем корректность вводимого названия 
-        elseif(!(Helper::correctName($title_category_new))) { 
-          $err404 = true;  
-          $msg = Helper::errors();         
-        } 
-           //проверка названия на незанятость вводимого названия
-        elseif(!($mCat->correctOrigin('id_category', 'categories', 'title_category', $title_category_new))){   
+        $title_category_new = trim($_POST['title_category']);
+
+ //проверка названия на незанятость вводимого названия
+        if(!($mCat->correctOrigin('id_category', 'categories', 'title_category', $title_category_new))){   
           $err404 = true;
-          $msg = 'Название занято';
-          
+          $msg = ['Название занято'];          
         }   
-        else {
-       //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
-        //добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
-         $mCat->edit(  ['title_category' => $title_category_new], $id); 
-         header("Location: " . ROOT . "category/$id");
-         exit();
-       }
-     }
+  else {
+//собираем исключения брошенные в методе add/insert BaseModel
+   try{ 
+//подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
+//добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
+           $mCat->edit(  ['title_category' => $title_category_new], $id); 
+           header("Location: " . ROOT . "category/$id");
+           exit();
+         } catch (IncorrectDataException $e) {
+ //обрабатываем исключения брошенные в методе add/insert BaseModel и выводим ошибку в представлении с помощью метода getErrors класса  IncorrectDataException
+          $msg = [];
+          $msg = ($e->getErrors());
+        } 
+      }
+    }
      $this->content = $this->build('edit-category', [
       'title_category' => $title_category,
           // 'users' => $users,

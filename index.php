@@ -10,7 +10,8 @@ use models\CategoriesModel;
 use models\PostModel;
 use models\TextsModel;
 use models\UsersModel;
-use models\VerificationModel;
+use core\Exception\ErrorNotFoundException;
+// use models\VerificationModel;
 //объявляем константу для переменной корня сайта для подстановки на ссылках сайта после перехода на человекочитаемые урлы
 define('ROOT','http://blog-oop/');
 session_start();
@@ -43,32 +44,40 @@ $action = sprintf('%sAction', $action);
 // var_dump($action);
 
 if(!$id){
-  $id = (isset($uriParts[2]) && is_numeric($uriParts[2]))  ? ($uriParts[2]): false ;
+	$id = (isset($uriParts[2]) && is_numeric($uriParts[2]))  ? ($uriParts[2]): false ;
 }
 if($id){
-  $_GET['id'] = $id;
+	$_GET['id'] = $id;
 }
 // var_dump($id);
 $request = new core\Request( $_GET, $_POST, $_SERVER, $_COOKIE, $_TITLE, $_SESSION);
 
 if (strpos($controller,'?' )) {
   //обрезаем полученный гет параметр до  знака ? ЕСЛИ ОН СУЩЕСТВУЕТ, за которым может задаваться очередная пара параметр-значение , например для вьюшек на домашней странице base  или inline
-$controller = stristr($controller, '?', true);
+	$controller = stristr($controller, '?', true);
 // echo $controller;
 }
-$filename = "controller/". sprintf('%sController', $controller).".php";
+try{
+	//проверяем контроллер на наличиен ошибок-исключений и если таковые есть обрабатываем их далее в catch 
+	$filename = "controller/". sprintf('%sController', $controller).".php";
 //прорверку контроллера на название  и ошибку
-if($controller === '' || !file_exists($filename) || !preg_match("/^[a-zA-Z0-9_-]+$/", $controller))
-{	$err404 = true;
-	// echo '404 нет такого контроллера:  '.$filename;
-	//если контролеера нет , значит присваиваем ему значение Error , в результате чего сработает контроллер Error и выведет в разметку сообщение об ошибке
+	if($controller === '' || !file_exists($filename) || !preg_match("/^[a-zA-Z0-9_-]+$/", $controller)){
+		$err404 = true;
+		//если контролеера нет , значит присваиваем ему значение Error , в результате чего сработает контроллер Error и выведет в разметку сообщение об ошибке
 		$controller = 'Error';
-}
-
+		//если в названии контролера после слеша есть буквенные знаки , а не числовые как в ID, такая ошибка будет отловлена через метод  __call класса BaseController и будет также выводится как 404
+	}
 //создаем объект для подключения к базе данных
-$db = DBConnect::getPDO();
-$controller = sprintf('controller\%sController', $controller);
-$controller = new $controller($request);
-$controller->$action();
+	$db = DBConnect::getPDO();
+	$controller = sprintf('controller\%sController', $controller);
+	$controller = new $controller($request);
+	$controller->$action();
+} catch (\Exception $e){	
+	$controller = new $controller($request);
+	//все спойманные исключения , которые дошпи из метода execute класса Validator до этого места обрабатываем здесь используя метод errorHandler  класса BaseController
+	$controller->errorHandler($e->getMessage(), $e->getTraceAsString());
+}
 $controller->render();
+
+
 

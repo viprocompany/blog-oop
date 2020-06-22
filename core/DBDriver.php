@@ -39,6 +39,7 @@ class DBDriver
 		$sql = sprintf('INSERT INTO %s %s VALUES %s', $table, $columns, $masks);
 		$stmt = $this->pdo->prepare($sql);
 		$stmt->execute($params);
+		//после подключения exception этот метод здесь не будет нужен
 		BaseModel::check_error($stmt); 	
 		return $this->pdo->lastInsertId();
 	}

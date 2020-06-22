@@ -68,10 +68,11 @@
 					</p> -->
 				</div>
 				<div class="column">   
-					<?php echo $title_2; ?>
+					<?php echo $title_2; ?><br>
 					<?php echo $error; ?>
+					<?php echo $new_row;?><hr>
 					<?php echo $content;?>
-									</div>	
+				</div>	
 			</div>	
 				</div>
 		<!--ФУТЕР-->

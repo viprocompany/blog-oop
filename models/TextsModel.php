@@ -16,36 +16,30 @@ class TextsModel extends BaseModel
 	protected $description = 'description';
 protected $validator;
 	protected $schema = [
-		// 'id_article' => [
-		// 	'primary' => true
-		// ],
+		'id_text' => [
+			'primary' => true
+		],
 
-		// 'title' => [
-		// 	'type' => 'string',
-		// 	'length' => [2, 150],
-		// 	'not_blank' => true,
-		// 	'require' => true
-		// ],
+		'text_name' => [
+			'type' => 'string',
+			'length' => [3, 30],
+			'not_blank' => true,
+			'require' => true
+		],
 
-		//   'content' => [
-		// 	'type' => 'string',
-		// 	'length' => 'big',
-		// 	'require' => true,
-		// 	'not_blank' => true,
-		// 	'type' => 'integer',
-		// ],
+		  'text_content' => [
+			'type' => 'string',
+			'length' => [3, 150],
+			'require' => true,
+			'not_blank' => true
+			
+		],
 
-		// 	'name' => [
-		// 	'require' => true
-		// ],
-
-		// 	'title_category' => [
-		// 	'require' => true
-		// ],
-
-		// 	'img' => [
-		
-		// ]
+			'description' => [
+				'require' => true,
+			'length' => [3, 500],
+			'not_blank' => true
+		]	
 
 
 	];

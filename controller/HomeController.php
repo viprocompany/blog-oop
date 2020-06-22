@@ -13,6 +13,7 @@ use core\DBDriver;
 use core\Request;
 use core\Templater;
 use core\Validator;
+use core\Exception\IncorrectDataException;
 
 
 class HomeController extends BaseController
@@ -179,24 +180,19 @@ class HomeController extends BaseController
 			$content = trim($_POST['content']);
 			$id_category = trim($_POST['category']);
 			$img = trim($_POST['image']);
-
-
-
-	//проверяем корректность вводимого названия 
-			if($title == '')			{		
-				$msg = 'Заполните название!';
-			}	
+	// //проверяем корректность вводимого названия 
+	// 		if($title == '')			{		
+	// 			$msg = 'Заполните название!';
+	// 		}	
 // //проверяем корректность вводимого названия 
 // 			elseif(!(Helper::newCorrectTitle($title))){		
 // 				$msg = Helper::errors();		
 // 			}	
 
 // 	// проверка названия на незанятость вводимого названия 
-// 			 elseif (!($mPost->correctOrigin('id_article', 'article', 'title', $title))) 			{
-// 				$msg = Helper::errors();
-
-// 		// $msg = 'Название занято!';
-// 			}
+			 if (!($mPost->correctOrigin('id_article', 'article', 'title', $title))) {
+				$msg = ['Название занято!'];
+			}
 //  //проверяем корректность вводимого айдишника автора
 // 			elseif(!($mUser->correctId('name', 'users', 'id_user', $id_user )))			{   
 // 				$msg = 'Неверный код автора';
@@ -210,39 +206,44 @@ class HomeController extends BaseController
 // 			elseif(!(Helper::correctContent($content))){
 // 				$msg = Helper::errors();
 // 			}	
-
-
-
 			else{
 // цифра для JSCRIPT 
 			// echo '1';
 //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
 //добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
-				$new_article_id = $mPost->add([
-					'title' => $title,
-					'content' => $content,
-					'id_user' => $id_user,
-					'id_category' => $id_category,
-					'img' => $img
-				]);
-
+			//собираем исключения брошенные в методе add/insert BaseModel
+				try{
+					$new_article_id = $mPost->add([
+						'title' => $title,
+						'content' => $content,
+						'id_user' => $id_user,
+						'id_category' => $id_category,
+						'img' => $img
+					]);
 				// header("Location: " . ROOT . "home/$new_article_id");
 				// exit();
 				//переадресация через функцию
-				$this->redirect(sprintf('/home/%s', $new_article_id));
-				}
+					  $this->redirect(sprintf('/home/%s', $new_article_id));
+				} catch (IncorrectDataException $e)	{
+					//обрабатываем исключения брошенные в методе add/insert BaseModel и выводим ошибку в представлении с помощью метода getErrors класса  IncorrectDataException
+						$msg = [];
+						$msg = ($e->getErrors());
+				}		
+			}
 		}
 		else{
 //если данные в инпуты не вводились, задаем пустые значения инпутов формы для того чтобы через РНР вставки в разметке кода не выскакивали(на странице в полях инпутов для заполнения) нотации об отсутствии данных в переменных $title и $content
-			// $title = "";
-			// $id_user = "";
-			// $name = "";
-			// $id_category = "";
-			// $content = "";
-			// $img = "";
-			// $msg = '';
+			$title = "";
+			$id_user = "";
+			$name = "";
+			$id_category = "";
+			$content = "";
+			$img = "";
+			$msg = '';
 		} 
 		$this->content = $this->build('add', [
+				'title' => $title,
+						'content' => $content,
 			'names' => $names,
 			'categories' => $categories,
 			'images' => $images,
@@ -318,53 +319,60 @@ class HomeController extends BaseController
   // {    
   //  $msg = Helper::errors();    
   // }  
-  //проверяем корректность вводимого названия 
-		if($title_new == '')
-		{   
-			$msg = 'Заполните название!';
-		} 
+  // //проверяем корректность вводимого названия 
+		// if($title_new == '')
+		// {   
+		// 	$msg = 'Заполните название!';
+		// } 
   // проверка названия на незанятость вводимого названия 
-  // elseif (($mText->correctOrigin( 'id_text ', ' texts ', ' text_name ', $text_name))) 
+  // if (($mPost->correctOrigin( 'id_article ', ' article ', ' title ', $id_article))) 
   // {
   //   // $msg = Helper::errors();
-  //   $msg = 'Название не менять!';
+  //   $msg = ['Название не менять!'];
   // }
-//проверяем корректность вводимого контента 
-		elseif(!(Helper::newCorrectTitle($title_new)))
-		{
-    // $msg = Helper::errors();
-			$msg = "Введите текст названия!";
-		} 
- //проверяем корректность вводимого айдишника автора
-		elseif(!($mUser->correctId('name', 'users', 'id_user', $id_user )))			{   
-			$msg = 'Неверный код автора';
-		}	
-//проверяем корректность вводимого айдишника категории новости
-		elseif(!$mCategory->correctId('title_category', 'categories', 'id_category', $id_category ))			{   
-			$msg = 'Неверный код категории новости';
-		}
-//проверяем корректность вводимого контента 
-		elseif(!(Helper::correctContent($content_new))){
-			$msg = Helper::errors();
-		}	
-		else
-		{
+// //проверяем корректность вводимого контента 
+// 		elseif(!(Helper::newCorrectTitle($title_new)))
+// 		{
+//     // $msg = Helper::errors();
+// 			$msg = "Введите текст названия!";
+// 		} 
+//  //проверяем корректность вводимого айдишника автора
+// 		elseif(!($mUser->correctId('name', 'users', 'id_user', $id_user )))			{   
+// 			$msg = 'Неверный код автора';
+// 		}	
+// //проверяем корректность вводимого айдишника категории новости
+// 		elseif(!$mCategory->correctId('title_category', 'categories', 'id_category', $id_category ))			{   
+// 			$msg = 'Неверный код категории новости';
+// 		}
+// //проверяем корректность вводимого контента 
+// 		elseif(!(Helper::correctContent($content_new))){
+// 			$msg = Helper::errors();
+// 		}	
+		// else
+		// {
 			$mPost_new = new PostModel(new DBDriver(DBConnect::getPDO()), new Validator());
+//собираем исключения брошенные в методе add/insert BaseModel
+			try{ 			
   // не работает показ последнего введенного айдишника в функции edit
-			$id_new =  $mPost_new->edit(
-				[
-					'title'=>$title_new,
-					'content'=>$content_new,
-					'id_user'=>$id_user_new,
-					'id_category'=>$id_category_new,
-					'img'=> $img_new 
-				], 
-				$id_article 
-			); 
+				$id_new =  $mPost_new->edit(
+					[
+						'title'=>$title_new,
+						'content'=>$content_new,
+						'id_user'=>$id_user_new,
+						'id_category'=>$id_category_new,
+						'img'=> $img_new 
+					], 
+					$id_article 
+				); 
 
-			header("Location: " . ROOT . "home/$id_article  ");
-			exit();
-		}
+				header("Location: " . ROOT . "home/$id_article  ");
+				exit();
+			} catch (IncorrectDataException $e) {
+ //обрабатываем исключения брошенные в методе add/insert BaseModel и выводим ошибку в представлении с помощью метода getErrors класса  IncorrectDataException
+				$msg = [];
+				$msg = ($e->getErrors());
+			} 
+		// }
 	}
 	$this->content = $this->build('edit', [
 		'post' => $post,

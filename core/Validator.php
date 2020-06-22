@@ -1,5 +1,8 @@
 <?php
 namespace core;
+
+use core\Exception\ValidatorException;
+
 class Validator
 {
 	public $clean = [];
@@ -35,7 +38,8 @@ class Validator
 			break;
 
 			default:
-		// error
+			//error без перехвата на месте , здесь исключение только бросаем 
+			throw new \Exception(' Incorerect type of data in method in method isTypeMatching! Некорректный тип данных !');	
 			break;
 		}
 	}
@@ -44,18 +48,32 @@ class Validator
 	{
 		switch ($type) {
 			case 'title':
-			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\'\d\-\s\!?;:.,-])/', $field);
+			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\&\%\'\$\d\-\s\!?;:.,-])/', $field);
+			break;
+			case 'text_name':
+			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\&\'\d\-\s\:.,-])/', $field);
+			break;
+
+				case 'user_name':
+			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\&\'\d\-\s\:.,-])/', $field);
+			break;
+
+				case 'category_name':
+			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\&\'\d\-\s\:.,-])/', $field);
+			break;
+	   case 'text_content':
+			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\&\%\'\$\d\-\s\!?;:.,-])/', $field);
 			break;
 
 			case 'content':
-			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\'\d\-\s\!?;:.,-])/', $field);
+			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\@\$\%\'\d\-\s\!?;:.,+*-])/', $field);
 			break;
 
-			case 'name':
-			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\'\d\-\s\:.,-])/', $field);
+		case 'description':
+			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\@\$\%\'\d\-\s\!?;:.,+*-])/', $field);
 			break;
-			default:
-		// error
+			default:	
+			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ0-9])/', $field);	
 			break;
 		}
 	}
@@ -75,22 +93,24 @@ class Validator
 				$min = false;
 			}
 			else{
-				//error
-				//в данном случае будет выскакивать ошибка как будто задано неправильное количество знаков, так как для сравнения из полученного массива будет подставлятся null, если в схеме в массиве значений задали любой тип кроме ineger
+//error без перехвата на месте , здесь исключение только бросаем перехватываем его и обрабатываем его в контролеере индексного файла после try в catch
+			throw new ValidatorException('Data is not INTEGER in method isLengthMatch! Некорректные данные использованы для расчета размера заполняемого поля!');
+	// ЕСЛИ ИСКЛЮЧЕНИЕ НЕ ОТПРАВИТЬ в данном случае будет выскакивать ошибка как будто задано неправильное количество знаков, так как для сравнения из полученного массива будет подставлятся null, если в схеме в массиве значений задали любой тип кроме ineger
 			}
 		}
 
 		if($isArray && (!$max || !$min)){
-//error
+//error без перехвата на месте , здесь исключение только бросаем перехватываем его и обрабатываем его в контролеере индексного файла после try в catch
+			throw new ValidatorException(' Incorerect data in method isLengthMatch! Некорректные данные использованы для расчета размера заполняемого поля!');	
 		}
 		if(!$isArray && !$max ){
-//error
+//error без перехвата на месте , здесь исключение только бросаем перехватываем его и обрабатываем его в контролеере индексного файла после try в catch
+			throw new ValidatorException('Not found data in method isLengthMatch! Нет данных  для расчетадлины заполняемого поля!');	
 		}
 		$maxIsMatch = $max ? $this->isLengthMaxMatch($field, $max) : false;
 		$minIsMatch = $min ? $this->isLengthMinMatch($field, $min) : false;
 
-		return $isArray ? $maxIsMatch && $minIsMatch : $maxIsMatch;
-		
+		return $isArray ? $maxIsMatch && $minIsMatch : $maxIsMatch;		
 		//error
 	}
 
@@ -110,11 +130,29 @@ class Validator
 	{
 		// var_dump($this->rules);
 		// die;
+	// ПЕАРВЫЙ ВАРИАНТ без перехвата здесь, исключение летит выше по пути выполнения кода
 		if (!$this->rules) {
-					// ошибка							
+//error без перехвата на месте , здесь исключение только бросаем перехватываем его и обрабатываем его в контролеере индексного файла после try в catch
+			throw new ValidatorException(' Rules not found! Правило для этой сущности не найдено!');					
 		}
+
+//ДЛЯ ПРИМЕРА
+//  ВТОРОЙ ВАРИАНТ перехватывае исключение здесь и обрабатываем его на метсте
+		try{
+			if (!$this->rules) {
+				//бросаем исключение
+				throw new ValidatorException(' Rules not found! Правило для этой сущности не найдено!');					
+			}
+		} //ловим исключение и
+		catch (ValidatorException $e){
+    //обрабатываем исключение
+			var_dump($e-> getMessage());
+		}
+
+		
 		foreach ($this->rules as $name => $rules) {		
-			
+		//все ошибки собираем в массив 		errors ,который будет цепляться к исключениям брошенным в методах add/insert в классе BaseModel , далее они будут пехвачены в соответсвующих контроллерах home в экшнах add/insert  и др. аналогично
+
 	//проверка на обязательность наличие поля
 			if (!isset($fields[$name]) && isset($rules['require'])) {
 				$this->errors[$name] = sprintf('Поле %s обязательно должно быть!', $name);	
@@ -123,7 +161,13 @@ class Validator
 			if (!isset($fields[$name]) && (null!==($rules['require'] || !$rules['require']))) {
 				continue;
 			}    	
-
+			//после применения заменителей все методы работают некорректно
+		// if($name ==='title'){
+		// 		$name = 'Название';
+		// 	}
+		// 	if($name ==='content'){
+		// 		$name = 'Контент';
+		// 	}
 //проверка типа данных  поля
 			if (isset($rules['type']) && !$this-> isTypeMatching($fields[$name],$rules['type'])) {
 				$this->errors[$name] = sprintf('Поле %s должно быть типа %s!', $fields[$name], $rules['type']);
@@ -133,15 +177,16 @@ class Validator
 			if (isset($rules['correct']) && !$this-> isCorrect($fields[$name],$rules['correct'])) {
 				$this->errors[$name] = sprintf('Поле %s   заполнено некорректным текстом !', $name);
 			} 
-							 //проверки количества вводимых символов
+
+			// 				 //проверки количества вводимых символов
 			if (isset($rules['length']) && !$this->isLengthMatch($fields[$name], $rules['length'])) {
-				// var_dump($fields[$name]);
-				$this->errors[$name] = sprintf('Поле %s должно корректное количество знаков!', $name);
+				$this->errors[$name] = sprintf('Поле %s должно иметь корректное количество знаков!', $name);
 			}	 
 //проверка поля на пустоту с применением функции isBlank
 			if (isset($rules['not_blank']) && $this-> isBlank($fields[$name])) {
 				$this->errors[$name] = sprintf('Поле %s  не может быть пустым!', $name);
 			}	
+
 
 			if (empty($this->errors[$name])) {
 				if(isset($rules['type']) && $rules['type'] === 'string'){
@@ -152,14 +197,16 @@ class Validator
 				}
 				else{
 					$this->clean[$name] = $fields[$name];
-				}
-				
+				}				
 				$this->clean[$name] = sprintf(' %s OK!', $name);
 			}
 		}
-		var_dump($this->errors);
-		var_dump($this->clean);
-		die;
+		if(empty($this->errors)){
+			$this->success = true;
+		}
+		// var_dump($this->errors);
+		// var_dump($this->clean);
+		// die;
 	}	
 }
 

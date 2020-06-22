@@ -8,6 +8,7 @@ use core\Request;
 use core\DBDriver;
 use models\Helper;
 use core\Validator;
+use core\Exception\IncorrectDataException;
 
 class UserController extends BaseController
 {
@@ -59,8 +60,7 @@ public function oneAction()
   //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
   $_SESSION['returnUrl'] = ROOT . "user/$id_user";
   // Header('Location: login.php');
- }
-$err404 = false;
+}
 
 $id = $this->request->get('id');
 $users = $mUser->getById($id); 
@@ -69,26 +69,26 @@ $name = $users['name'];
         //    проверяем корректность вводимого айдишника
 $this->title .=': ' . $name;
     //при добавлении нового категории будет создаваться переменная шаблона для вывода данных о новом авторе , которая далее будет добавлена в массив переменных шаблона v_main
-if(!($mUser->correctId('name', 'users', 'id_user', $id )))
+if(!($users))
 { 
   $err404 = true;  
   $this->content = $this->build('errors', [
   ]);
 }
-  else{
-    $this->new_row = $this->build('users-new', [
-     'name' => $name,
-     'id_user' => $id
-   ]);
-    $users = $mUser->getAll('id_user DESC');
+else{
+  $this->new_row = $this->build('users-new', [
+   'name' => $name,
+   'id_user' => $id
+ ]);
+  $users = $mUser->getAll('id_user DESC');
 
-    $this->content = $this->build('users', [
-     'name' => $name,
-     'users' => $users,
-     'isAuth' => $isAuth,
-     'login' => $login
-   ]);
-  }
+  $this->content = $this->build('users', [
+   'name' => $name,
+   'users' => $users,
+   'isAuth' => $isAuth,
+   'login' => $login
+ ]);
+}
 }
 
 public function addAction()
@@ -118,36 +118,28 @@ public function addAction()
   $mUser = new UsersModel(new DBDriver(DBConnect::getPDO()),new Validator());
 //получение параметров с формы методом пост
   if($this->request->isPost()){
-  // if(count($_POST) > 0){
     $name = trim($_POST['name']);
-  //проверяем  название на пустоту
-    if($name == '')
-    {   
-      $msg = 'Заполните имя!';
-    } 
-//проверяем корректность вводимого названия 
-    elseif(!(Helper::correctName($name)))
-    {   
-      $msg = Helper::errors();    
-    } 
  //проверка названия на незанятость вводимого названия
-    elseif(!($mUser->correctOrigin('id_user', 'users', 'name', $name)))
-    {   
-      $msg = 'Название занято';
+    if(!($mUser->correctOrigin('id_user', 'users', 'name', $name))) {   
+      $msg = ['Название занято'];
     }   
-    else
-    {
+    else    {
+  //собираем исключения брошенные в методе add/insert BaseModel
+      try{
 //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
 //добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
-      $new_user_id = $mUser->add(['name'=>$name]);  
-
-      header("Location: " . ROOT . "user/$new_user_id");
-      exit();
+        $new_user_id = $mUser->add(['name'=>$name]);  
+        header("Location: " . ROOT . "user/$new_user_id");
+        exit();
+      } catch (IncorrectDataException $e) {
+          //обрабатываем исключения брошенные в методе add/insert BaseModel и выводим ошибку в представлении с помощью метода getErrors класса  IncorrectDataException
+        $msg = [];
+        $msg = ($e->getErrors());
+      }   
     }
   }
-
   $this->content = $this->build('add-user', [
-    'names' => $names,
+    'name' => $name,
     'msg' => $msg,
     'isAuth' => $isAuth,
     'login' => $login
@@ -156,13 +148,17 @@ public function addAction()
 
 public function editAction()
 {
-
 //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
   $isAuth = Auth::isAuth();
 //имя пользователя для вывода в приветствии
   $login = Auth::isName();
   $msg = '';
-
+//проверка авторизации
+  if(!$isAuth){
+//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
+    $_SESSION['returnUrl'] = ROOT . "user/edit/$id_user";
+    header("Location: " . ROOT . "login");
+  }
 //для вызова
   //создаем объект для подключения к базе данных
   $db = DBConnect::getPDO();
@@ -170,57 +166,44 @@ public function editAction()
   $mUser = new UsersModel(new DBDriver(DBConnect::getPDO()),new Validator());
   $id = $this->request->get('id');
   //задаем массив для дальнейшего вывода фамилий авторов в разметке через опшины селекта, после выбора автора из значения опшина подтянется айдишник автора для дальнейшего добавления в статью
-  $users = $mUser->getById($id); 
+  $users = $mUser->getById($id);  
   // переопределяем title
   $name = $users['name'];
   $id_user =  $users['id_user'];
+
 //    проверяем корректность вводимого айдишника
   $this->title .=': ИЗМЕНИТЬ  АВТОРА: ' . $name;
-//проверка авторизации
-  if(!$isAuth){
-//ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
-    $_SESSION['returnUrl'] = ROOT . "user/edit/$id_user";
-    header("Location: " . ROOT . "login");
-  }
   
-  if(!($mUser->correctId('name', 'users', 'id_user', $id )) || !$id_user)  { 
+  if(!$users || !$id_user)  { 
+    echo  'no'. $id_user ;
     $err404 = true;  
     $this->content = $this->build ('errors', [
     ]);
   }
-  else{
-      //получение параметров с формы методом пост
-    if($this->request->isPost()){
-    // if(count($_POST) > 0){
-      $err404 = false;
-      $name_new = trim($_POST['name']);
-      // echo   $name_new;
-    //проверяем  название на пустоту
-      if($name_new == '')    {  
-        $err404 = true; 
-        $msg = 'Заполните имя!';
-      
-      } 
-  //проверяем корректность вводимого названия 
-      elseif(!(Helper::correctName($name_new)))    { 
-        $err404 = true;  
-        $msg = Helper::errors();   
-  
-      } 
+  else
+  {
+          //получение параметров с формы методом пост
+  if($this->request->isPost()){
+    $name_new = trim($_POST['name']);    
+       
    //проверка названия на незанятость вводимого названия
-      elseif(!($mUser->correctOrigin('id_user', 'users', 'name', $name_new))){   
-        $err404 = true;
-        $msg = 'Название занято';
-
-      }   
-      else {
+    if(!($mUser->correctOrigin('id_user', 'users', 'name', $name_new))){   
+     $msg = ['Название занято'];     
+    }   
+    else {
+      try{
   //подключаемся к базе данных через  функцию db_query_add_article и предаем тело запроса в параметре, которое будет проверяться на ошибку с помощью этой же функции, после 
   //добавление данных в базу функция вернет значение последнего введенного айдишника в переменную new_article_id, которую будем использовать для просмотра новой статьи при переходе на страницу post.php
        $mUser->edit( [ 'name' => $name_new], $id); 
        header("Location: " . ROOT . "user/$id");
        exit();
-     }
-   }
+     } catch (IncorrectDataException $e) {
+          //обрабатываем исключения брошенные в методе add/insert BaseModel и выводим ошибку в представлении с помощью метода getErrors класса  IncorrectDataException
+      $msg = [];
+      $msg = ($e->getErrors());
+    } 
+  }
+}
    $this->content = $this->build('edit-user', [
     'name' => $name,
     'users' => $users,
@@ -229,7 +212,9 @@ public function editAction()
     'login' => $login,
     'id_user' => $id
   ]);
- }
+  }
+
+ 
 }
 public function deleteAction()
   { 

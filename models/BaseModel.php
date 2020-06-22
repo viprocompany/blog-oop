@@ -3,6 +3,7 @@ namespace models;
 
 use core\DBDriver;
 use core\Validator;
+use core\Exception\IncorrectDataException;
 
 abstract class BaseModel
 {
@@ -47,17 +48,25 @@ abstract class BaseModel
 		//обращаемся к валидатору через функцию его класса  execute, которая проверяет соответствие полей заданной СХЕМЕ
 			$this->validator->execute($params);
 //если валидация прошла неуспешно выводим ошибку 
-		if (!$this->validator->success) {
-			// обработать ошибку
-			$this->validator->errors;
-			// die;
-		}
+			if (!$this->validator->success) {
+			// бросаем ошибку с полученным массивом errors   из метода execute класса Validator, далее она летит в контроллер индексного файла
+				throw new IncorrectDataException($this->validator->errors);
+				$this->validator->errors;
+			}
 
 		return $this->db->insert($this->table, $params);
 	}
 
   	public function edit(array $params,  $id)
   	{
+  				//обращаемся к валидатору через функцию его класса  execute, которая проверяет соответствие полей заданной СХЕМЕ
+			$this->validator->execute($params);
+//если валидация прошла неуспешно выводим ошибку 
+			if (!$this->validator->success) {
+			// бросаем ошибку с полученным массивом errors   из метода execute класса Validator, далее она летит в контроллер индексного файла
+				throw new IncorrectDataException($this->validator->errors);
+				$this->validator->errors;
+			}
   		return $this->db->update($this->table, $this->id_param, $params, $id);
   	}
 
@@ -92,14 +101,5 @@ function correctId($text, $table, $param, $id ){
 	}
 	return true;
 }
-// //функция работы с запросом, в параметре передается тело запроса и параметры для подстановки в тело запроса в виде массива(по умолчанию пустой, и поэтому не всегда указывается )
-// 	public	function dbQuery($sql, $params = []){
-// //подготовка запроса
-// 		$stmt = $this->db->prepare($sql);
-// //готовый выполненный запрос с параметрами , который можно впоследствии выводить для SELECT с помощью fetch , fetchAll
-// 		$stmt->execute($params);
-// //проверка тела запроса на ошибки с помощью функции db_check_error
-// 		self::check_error($stmt); 
-// 		return $stmt;
-// 	}
+
 }

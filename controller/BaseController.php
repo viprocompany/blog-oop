@@ -1,6 +1,7 @@
 <?php  
 namespace controller;
 
+use core\Exception\ErrorNotFoundException;
 use core\Auth;
 use core\Request;
 // use core\DBConnect;
@@ -21,7 +22,21 @@ class BaseController
     $this->content = '';
     // $this->statica = '';
   }
-
+//метод используется для вызова несуществующего метода у существующего объекта
+public function __call($name, $arguments)
+{
+  //делаем проверку на несоответствие
+  try{
+    // бросаем исключение
+  throw new \core\Exception\ErrorNotFounException(); 
+   //ловим исключение и
+    }catch (\core\Exception\ErrorNotFounException $e){
+    //обрабатываем исключение и выводим в разметку сообщение об 404
+    $this->title .=' 404';
+    $this->content = $this->build('errors', [
+    ]);
+  }
+}
   protected function  build($template, $params =[])
   {
     ob_start();
@@ -33,6 +48,10 @@ class BaseController
       __DIR__ . '/../views/'.$template.'.html.php';
     //порлучаем вытянутые данные и очищаем буфер
     return ob_get_clean();
+  }
+//метод используется для обработки исключений в сформированном контроллере индексного файла, собирает исключения как $message и дерево файлов $trace, по которму поднимется исключение из метода execute класса Validator
+  public function errorHandler($message,$trace){
+    $this->content = $message;
   }
 
   public function render()
@@ -50,12 +69,10 @@ class BaseController
         'isAuth' => $isAuth,
         'login' => $login
         // ,        'msg' => $msg
-      ]); 
-     
+      ]);      
      //рпринимаем массив статических значений для граыики разметки из еласса ТЕКСТ. аналог админки по выбору картинок и заголовков
   $statica = Templater::statica();
   // var_dump($statica);
-
     echo $this->build('main',
       [
         'title' => $this->title,
