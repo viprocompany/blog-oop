@@ -50,6 +50,9 @@ class Validator
 			case 'title':
 			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\&\%\'\$\d\-\s\!?;:.,-])/', $field);
 			break;
+				case 'login':
+			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\&\%\'\$\d\-\s\!?;:.,-])/', $field);
+			break;
 			case 'text_name':
 			return preg_match('/^([а-яА-Яa-zA-ZёЁІіЇїЄєҐґ\&\'\d\-\s\:.,-])/', $field);
 			break;
@@ -198,7 +201,7 @@ class Validator
 				else{
 					$this->clean[$name] = $fields[$name];
 				}				
-				$this->clean[$name] = sprintf(' %s OK!', $name);
+				// $this->clean[$name] = sprintf(' %s OK!', $name);
 			}
 		}
 		if(empty($this->errors)){

@@ -13,6 +13,7 @@ use models\UsersModel;
 use core\Exception\ErrorNotFoundException;
 // use models\VerificationModel;
 //объявляем константу для переменной корня сайта для подстановки на ссылках сайта после перехода на человекочитаемые урлы
+// define('ROOT','http://10.0.7.144/');
 define('ROOT','http://blog-oop/');
 session_start();
 $title = '';
@@ -40,8 +41,24 @@ if(isset($uriParts[1]) && is_numeric($uriParts[1])){
 }
 
 $action = isset($uriParts[1]) && $uriParts[1] !== '' && is_string($uriParts[1]) ? $uriParts[1] : 'index';
-$action = sprintf('%sAction', $action);
+
+//если экшн имеет название из нескольких слов то в ссылке мы разделяем их с помощью тире и с маленькой буквы, а экшн именуем в кемел кейсе как обычно, но в результате следующих действий все слова в названии будут возвращены в контроллер с большой буквы
+$actionParts = explode('-', $action);
+for($i=1; $i<count($actionParts); $i++){
+	if (!isset($actionParts[$i])) {
+		continue;
+	}
+	//ucfirst преобразует первую букву в верхний регистр
+	$actionParts[$i] = ucfirst($actionParts[$i]);
+}
+// var_dump($actionParts);
+
+//склеиваем слова полученные из ссылки в название контроллера , который будет начинатсяс маленькой буквы в стиле кемелкейс
+$action = implode('',$actionParts );
 // var_dump($action);
+
+$action = sprintf('%sAction', $action);
+
 
 if(!$id){
 	$id = (isset($uriParts[2]) && is_numeric($uriParts[2]))  ? ($uriParts[2]): false ;

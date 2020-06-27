@@ -43,9 +43,11 @@ abstract class BaseModel
 	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное, передаем в третий параметр константу из класса DBDriver для выборки одной строки 
 	}
 
-	public function add(array $params)
+	public function add(array $params, $needValidation = true)
 	{		
-		//обращаемся к валидатору через функцию его класса  execute, которая проверяет соответствие полей заданной СХЕМЕ
+		// $needValidation флаг валидации , по умолчанию true, поэтому все делаем дальше 
+		if($needValidation){
+					//обращаемся к валидатору через функцию его класса  execute, которая проверяет соответствие полей заданной СХЕМЕ
 			$this->validator->execute($params);
 //если валидация прошла неуспешно выводим ошибку 
 			if (!$this->validator->success) {
@@ -53,7 +55,11 @@ abstract class BaseModel
 				throw new IncorrectDataException($this->validator->errors);
 				$this->validator->errors;
 			}
+//при успешной валидации
+			$params = $this->validator->clean;
+		}
 
+// если  needValidation имеет флаг FALSE данные без валидации отпправляем в insert. Используем при вводе данных пароля с хеш
 		return $this->db->insert($this->table, $params);
 	}
 

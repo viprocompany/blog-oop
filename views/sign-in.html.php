@@ -1,9 +1,9 @@
-	ВХОД<hr>
+	АВТОРИЗАЦИЯ<hr>
 <form class="form" method="post">
 	<div class="line">
 		<label class="label" >
 			<span class="title" for="name">Логин</span>			
-			<input type="text" class="inp" placeholder="введите логин" name="login" value=""><br>
+			<input type="text" class="inp"  name="login" placeholder="введите логин" value=""><br>
 		</label><br>
 	</div>
 	<div class="line">
