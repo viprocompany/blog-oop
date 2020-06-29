@@ -18,7 +18,7 @@
 
   <input type="submit" class="btn btn-success inp" value="Войти">
 </form>
-<span style='color: green;'><?php  echo $msg_2 ?></span><br/>
+<!-- <span style='color: green;'><?php  echo $msg_2 ?></span><br/> -->
   <div>
     <?php 
     if($msg){

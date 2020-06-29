@@ -29,7 +29,7 @@ class TextController extends BaseController
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
     $_SESSION['returnUrl'] = ROOT . "text";
   // Header('Location: /../views/login.html.php');
-    header("Location: " . ROOT . "login");
+    header("Location: " . ROOT . "logins/login");
   }
 	  //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
@@ -70,7 +70,7 @@ public function oneAction()
   {
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
     $_SESSION['returnUrl'] = ROOT . "text/$id_text";
-  // Header('Location: login.php');
+  // Header('Location: logins/sign-in.php');
   }
 
   $id = $this->request->get('id');
@@ -132,7 +132,7 @@ public function addAction()
   {
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
     $_SESSION['returnUrl'] = ROOT . "text/add";
-    header("Location: " . ROOT . "login");
+    header("Location: " . ROOT . "logins/login");
   }
   //если данные в инпуты не вводились, задаем пустые значения инпутов формы для того чтобы через РНР вставки в разметке кода не выскакивали(на странице в полях инпутов для заполнения) нотации об отсутствии данных в переменных $title и $content
     // $title = "";
@@ -232,7 +232,7 @@ public function editAction()
   if(!$isAuth){
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
     $_SESSION['returnUrl'] = ROOT . "text/edit/$id_text";
-    header("Location: " . ROOT . "login");
+    header("Location: " . ROOT . "logins/login");
   }
     //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
@@ -311,7 +311,7 @@ public function deleteAction()
   {
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
     $_SESSION['returnUrl'] = ROOT . "text";
-  // Header('Location: login.php');
+  // Header('Location: logins/sign-in.php');
   }
         //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';

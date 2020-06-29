@@ -27,9 +27,9 @@ class LoginsModel extends BaseModel
 		]
 	];
 
-	public function __construct(DBDriver $db, Validator $validator)
+public function __construct(DBDriver $db, Validator $validator)
 	{
-		parent::__construct($db, $validator, 'logins');
+		parent::__construct($db, $validator, 'logins','login');
 		$this->validator->setRules($this->schema);
 	}	
 
@@ -46,11 +46,31 @@ class LoginsModel extends BaseModel
 			'password'=> $this->getHash($this->validator->clean['password'])
 		]);	
 			// var_dump($this->validator->clean);
- 
 	}
+
+
+	public function  signIn(array $fields)	
+	{
+//валидируем 
+		$this->validator->execute($fields);
+		if(!$this->validator->success){
+		// бросаем ошибку с полученным массивом errors   из метода execute класса Validator, далее она летит в контроллер индексного файла
+			throw new IncorrectDataException($this->validator->errors);
+		}
+
+	}
+	//функция хеширования пароля пользователя при передаче в базу данных с помощью функции add 
+	// 777 - это соль
 	public function getHash($password)
 	{
 		return md5($password . '777');
 	}
-
+	
+	public function getByLogin( $Login )
+	{		
+		$sql = sprintf('SELECT * FROM  %s  WHERE  %s= :login '  , $this->table, $this->id_param);		
+		// $sql = ("SELECT * FROM " . $this->table . " WHERE  " . $this->id_param . "= :id");
+		return  $this->db->select($sql,['login' => $Login], DBDriver::FETCH_ONE);
+	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное, передаем в третий параметр константу из класса DBDriver для выборки одной строки 
+	}
 }

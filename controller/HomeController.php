@@ -40,7 +40,7 @@ class HomeController extends BaseController
 		{
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
 			$_SESSION['returnUrl'] = ROOT . "home";
-  // Header('Location: login.php');
+  // Header('Location: logins/sign-in.php');
 		}
 	//создаем объект для подключения к базе данных
 		$db = DBConnect::getPDO();
@@ -141,7 +141,7 @@ class HomeController extends BaseController
 		if(!$isAuth){
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
 			$_SESSION['returnUrl'] = ROOT . "home/add";
-			header("Location: " . ROOT . "login");
+			header("Location: " . ROOT . "logins/login");
 		}
 //для вызова
 	//создаем объект для подключения к базе данных
@@ -278,7 +278,7 @@ class HomeController extends BaseController
 		if(!$isAuth){
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
 			$_SESSION['returnUrl'] = ROOT . "home/edit/$id_article";
-			header("Location: " . ROOT . "login");
+			header("Location: " . ROOT . "logins/login");
 		}
 //задаем массив для дальнейшего вывода фамилий авторов в разметке через опшины селекта, после выбора автора из значения опшина подтянется айдишник автора для дальнейшего добавления в статью
 	$mUser = new UsersModel(new DBDriver(DBConnect::getPDO()), new Validator());

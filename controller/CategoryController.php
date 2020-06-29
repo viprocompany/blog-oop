@@ -26,7 +26,7 @@ if(!$isAuth)
 {
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
 $_SESSION['returnUrl'] = ROOT . "category";
-  header("Location: " . ROOT . "login");
+  header("Location: " . ROOT . "logins/login");
 }
 	//создаем объект для подключения к базе данных
 	$db = DBConnect::getPDO();
@@ -57,7 +57,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
     {
 //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
       $_SESSION['returnUrl'] = ROOT . "category/$id_category";
-  // Header('Location: login.php');
+  // Header('Location: logins/sign-in.php');
     }
 
     $id = $this->request->get('id');
@@ -103,7 +103,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
     {
   //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
       $_SESSION['returnUrl'] = ROOT . "category/add";
-      header("Location: " . ROOT . "login");
+      header("Location: " . ROOT . "logins/login");
     }
     //если данные в инпуты не вводились, задаем пустые значения инпутов формы для того чтобы через РНР вставки в разметке кода не выскакивали(на странице в полях инпутов для заполнения) нотации об отсутствии данных в переменных $title и $content
     $title_category = "";
@@ -170,7 +170,7 @@ $_SESSION['returnUrl'] = ROOT . "category";
     if(!$isAuth){
       //ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : в массив сессии  добавляем элемент указывающий куда перейдет клиент после авторизации в файле login.php, если он заходил после клика на "ДОБАВИТЬ автора"
       $_SESSION['returnUrl'] = ROOT . "category/edit/$id_category";
-      header("Location: " . ROOT . "login");
+      header("Location: " . ROOT . "logins/login");
     }
 
     if(!($mCat->correctId('title_category', 'categories', 'id_category', $id )) || !$id_category)  { 

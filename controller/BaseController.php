@@ -60,6 +60,7 @@ public function __call($name, $arguments)
     $isAuth = Auth::isAuth();
 //имя пользователя для вывода в приветствии
     $login = Auth::isName();
+  
     // <!-- проверка авторизации на сессию либо куки
 // подтверждаем авторизацию с помощью сессии -->
 // include('v/v_auth.php');

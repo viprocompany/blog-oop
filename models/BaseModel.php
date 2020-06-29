@@ -43,6 +43,7 @@ abstract class BaseModel
 	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное, передаем в третий параметр константу из класса DBDriver для выборки одной строки 
 	}
 
+
 	public function add(array $params, $needValidation = true)
 	{		
 		// $needValidation флаг валидации , по умолчанию true, поэтому все делаем дальше 
@@ -107,5 +108,6 @@ function correctId($text, $table, $param, $id ){
 	}
 	return true;
 }
+
 
 }
