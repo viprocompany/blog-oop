@@ -19,10 +19,10 @@ class DBConnect
 	public static function getPDO()
 	{
 //$opt взято в том числе и для исключения дубляжа запрсов из базы по ссылке с http://phpfaq.ru/pdo
-//явно указываем что для ошибок надо использовать ERRMODE_EXCEPTION, чтобы PDO не возвращало объект с ошибками  авозвращало исключение
-// по дефолту возвращает FETCH_ASSOC
+//явно указываем что для ошибок надо использовать ERRMODE_EXCEPTION, чтобы PDO не возвращало объект с ошибками  а возвращало исключение
+// по дефолту PDO возвращает FETCH_ASSOC
 		$opt = [
-			\PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+			\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
 			\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
 		];
 		// static $db;

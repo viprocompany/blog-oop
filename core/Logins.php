@@ -17,30 +17,26 @@ use core\Exception\IncorrectDataException;
 
  	public function __construct(LoginsModel $mLogins, SessionModel $mSession)
  	{
- 		//делаем по умолчанию что авторизавция пройден
- 		$_SESSION['is_auth'] = true;
+ 		//делаем по умолчанию что авторизавция пройденa
+ 		// $_SESSION['is_auth'] = true;
  		$this->mLogins = $mLogins;
  		$this->mSession = $mSession;
  	}
  	public function signIn(array $fields)
  	{
-
-
 //валидируем - вызываем signIp и передаем туда  $fields - поля для логин, пароль
  		 $this->mLogins->signIn($fields);
- 	//можно перехватиь ошибку валидации из модели LoginsModel здесь, но сделано  в контроллере LoginsController 
+ 	//можно перехватиь ошибку валидации из модели LoginsModel здесь, но сделано  в контроллере LoginsController
 
- // 		$login = $fields['login'];
-	// 	 var_dump($fields, $login);
- // // die;
-	// 	// $user = $this->$mLogins->getByLogin($login);
-	// 	$user = $this->$mLogins->getByLogin(isset($fields['login']) ?? null);
-
+ 		$login = $fields['login'];
+		$user = $this->mLogins->getByLogin($login);
  // var_dump($user);
  // die;
-
- 		 
- 		
+		if(!$user){
+			//бросаем исключение
+			throw new IncorrectDataException(sprintf('Логин: %s не существует!', $login));	
+			$e->getErrors();
+		} 		
  	}
 
  	public function isAuth(Request $request)

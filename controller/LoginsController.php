@@ -47,16 +47,16 @@ class LoginsController extends BaseController
 //создаем объект класса logins , и добавляем туда объект mLogins используя модель класса  LoginsModel и объект mSession через подключение модели класса SessionModel
 			$user = new logins($mLogins, $mSession);		
 //массив данных из формы для валидации
-					// var_dump(($this->request->post()));
+				
 				$user->signIn($this->request->post());	
-// var_dump($user);
+
 //после того как данные валидированы  переходим к авторизации	
 //проверояем есть ли такой логин в базе
-				if (($mLogins->correctOrigin('id_login', 'logins', 'login', $login))) {
-					$msg = ['Нет такого пользователя!'];
-				}
+				// if (($mLogins->correctOrigin('id_login', 'logins', 'login', $login))) {
+				// 	$msg = ['Нет такого пользователя!'];
+				// }
 //сравниваем введенный пароль и тот, который есть в базе
-				elseif (!($password == $password_match)) {
+				if (!($password == $password_match)) {
 					$msg = ['Неправильный пароль!' ];			
 				}
 				else{
@@ -85,7 +85,14 @@ class LoginsController extends BaseController
 				}
 //обрабатываем исключения по валидации значений логина и пароля ,вводимых в форму
 			} catch (IncorrectDataException $e) {
-				$msg = ($e->getErrors());					
+				if(is_array($e->getErrors())){				
+					$msg = $e->getErrors();	
+				}			
+				else{
+					//приводим строку к массиву а разбиением строки на элементы массива будет любая хрень типа some, которой нет в этой строке ,для того чтобы массив состоял из той целой и неразбитой строки ,что придет с ошибкой throw из метода signIn  файла Logins.php 
+					$msg = explode("some", $e->getErrors());				
+				}	
+
 			}		
 		}	
 

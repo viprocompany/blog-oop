@@ -28,9 +28,9 @@ public function __call($name, $arguments)
   //делаем проверку на несоответствие
   try{
     // бросаем исключение
-  throw new \core\Exception\ErrorNotFounException(); 
+  throw new \core\Exception\ErrorNotFoundException(); 
    //ловим исключение и
-    }catch (\core\Exception\ErrorNotFounException $e){
+    }catch (\core\Exception\ErrorNotFoundException $e){
     //обрабатываем исключение и выводим в разметку сообщение об 404
     $this->title .=' 404';
     $this->content = $this->build('errors', [
