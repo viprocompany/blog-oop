@@ -46,7 +46,7 @@ class LoginsController extends BaseController
 			try{
 //создаем объект класса logins , и добавляем туда объект mLogins используя модель класса  LoginsModel и объект mSession через подключение модели класса SessionModel
 			$user = new logins($mLogins, $mSession);		
-//массив данных из формы для валидации
+//берем массив данных из формы и забрасываем их в метод signIn класса Logins одноименного файла для валидации запорлнения полей формы по количеству знаков  и правильности введенных туда пар  пароля и логина пользователя. сравнение введенных в форму полей производится с данными из базы. В случае  удачного сравнения происходит авторизация , а при нажатиии на форме галочки  ЗАПОМНИТЬ вешаются куки для логина и пароля
 				
 				$user->signIn($this->request->post());	
 
@@ -56,20 +56,22 @@ class LoginsController extends BaseController
 				// 	$msg = ['Нет такого пользователя!'];
 				// }
 //сравниваем введенный пароль и тот, который есть в базе
-				if (!($password == $password_match)) {
-					$msg = ['Неправильный пароль!' ];			
-				}
-				else{
-//задаем значение авторизации как действительное
-					$_SESSION['is_auth'] = true;
+				// if (!($password == $password_match)) {
+				// 	$msg = ['Неправильный пароль!' ];			
+				// }
+				// else
+				// {
+// //задаем значение авторизации как действительное
+// 					$_SESSION['is_auth'] = true;
 
-// при выставлении галочки "запомнить" 
-					$remember = 	$this->request->post('remember');
-					if(isset($remember)  ?? true){
-				//при удачной авторизации задаем куку с логином пользователя
-						setcookie('login',$login, time()+3600*24*365 , '/');
-						setcookie('password', LoginsModel::getHash($password), time()+3600*24*365 , '/');					
-					}
+// // при выставлении галочки "запомнить" 
+// 					$remember = 	$this->request->post('remember');
+// 					if(isset($remember)  ?? true){
+// 				//при удачной авторизации задаем куку с логином пользователя
+// 						setcookie('login',$login, time()+3600*24*365 , '/');
+// 						setcookie('password', LoginsModel::getHash($password), time()+3600*24*365 , '/');					
+// 					}
+
 //!!!!!!!!ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : элемент $_SESSION['returnUrl'] указывающий куда пойдет клиент  после авторизации в файле login.php. НАПРИМЕР: если файл login.php открылся после клика по edit(изменению)  то клиент пойдет на edit.php выбранной статьи, так как на edit.php элемент задан как $_SESSION['returnUrl'] = 'edit.php?fname=$fname' .  соответственно добавление  и так далее !!!!!
 					if(isset($_SESSION['returnUrl']))
 					{
@@ -82,7 +84,7 @@ class LoginsController extends BaseController
 						header("Location: " . ROOT . "home");
 						exit();
 					}	
-				}
+				// }
 //обрабатываем исключения по валидации значений логина и пароля ,вводимых в форму
 			} catch (IncorrectDataException $e) {
 				if(is_array($e->getErrors())){				
@@ -98,6 +100,7 @@ class LoginsController extends BaseController
 
 		$this->content = $this->build('login', [
 			'msg'=>$msg	,
+			'mAuth'=>$mAuth	,
 			'login'=>$login
 // ,'password'=>$password		
 		]);

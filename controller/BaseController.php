@@ -4,7 +4,7 @@ namespace controller;
 use core\Exception\ErrorNotFoundException;
 use core\Auth;
 use core\Request;
-// use core\DBConnect;
+use core\Logins;
 // use core\DBDriver;
 use core\Templater;
 use models\TextsModel;
@@ -57,7 +57,10 @@ public function __call($name, $arguments)
   public function render()
   {
     //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
-    $isAuth = Auth::isAuth();
+    $isAuth = Logins::isAuth();
+    // echo('isAuth:  ' . $isAuth);
+    // echo('isAuth_session:  ' . $_SESSION['is_auth']);
+    // die;
 //имя пользователя для вывода в приветствии
     $login = Auth::isName();
   
@@ -71,9 +74,9 @@ public function __call($name, $arguments)
         'login' => $login
         // ,        'msg' => $msg
       ]);      
-     //рпринимаем массив статических значений для граыики разметки из еласса ТЕКСТ. аналог админки по выбору картинок и заголовков
+     //рпринимаем массив статических значений для графики разметки из kласса ТЕКСТ. аналог админки по выбору картинок и заголовков
   $statica = Templater::statica();
-  // var_dump($statica);
+ 
     echo $this->build('main',
       [
         'title' => $this->title,
@@ -81,17 +84,17 @@ public function __call($name, $arguments)
         'new_row' => $this->new_row,
         'auth'=> $inner_auth,
         'error' => $error,
-        'isAuth' => $isAuth,
-        // 'image_footer' => $image_footer,
-        // 'image_header' => $image_header,
-        // '$image_mail' => $image_mail,
-        // '$instagram' => $instagram,
-        // '$vk' => $vk,
-        // 'fb' => '$fb',
-        // 'title_1' => $title_1,
-        // 'title_2' => $title_2,
-        'login' => $login
-        // , $statica
+         'login' => $login,        
+        'isAuth' => $isAuth,        
+        'image_footer' => $statica['$image_footer'],
+        'image_header' => $statica['$image_header'],
+        'image_mail' => $statica['$image_mail'],
+        'instagram' => $statica['$instagram'],
+        'vk' => $statica['$vk'],
+        'fb' => $statica['$fb'],
+        'title_1' => $statica['$title_1'],
+        'title_2' => $statica['$title_2']       
+    
       ]);
   }
   //функция переадресации с указанием статуса 302-найдено, для роботов

@@ -57,8 +57,15 @@ background-color:#FFFFC6;
   padding: 10px;
 }
 #legend{  
-padding: 10px;
-background-color:#D6FFFF;
+  padding: 10px;
+  background-color:#D6FFFF;
+  text-align: center;
+  color: #330033;
+  font-family: 'Courier New Bold', Monaco, monospace;
+  font-size:  20px;
+  font-style: italic;  
+  text-align: center;
+  font-weight:  bold;
 }
 
 #downaldButton { 
@@ -97,21 +104,21 @@ padding-top: 10px;
 }
 
 #vkontakte{
-  background: url('../img/vk.jpg') no-repeat;  
+  /*background: url('../img/vk.jpg') no-repeat;  */
   width: 50px; 
   height: 30px;
   display: block;
   margin:  10px auto 10px auto;
 }
 #instagram{
-  background: url('../img/instagram.jpg') no-repeat;  
+  /*background: url('../img/instagram.jpg') no-repeat;  */
   width: 50px; 
   height: 30px;
   display: block;
   margin:  10px auto 10px auto;
 }
 #facebook{
-  background: url('../img/facebook.jpg') no-repeat;  
+  /*background: url('../img/facebook.jpg') no-repeat;  */
   width: 50px; 
   height: 30px;
   display: block;

@@ -36,5 +36,11 @@ public function __construct(DBDriver $db, Validator $validator)
 		$this->validator->setRules($this->schema);
 	}	
 
+		public function getBySid($login)
+	{		
+		$sql = sprintf('SELECT sid   FROM   %s JOIN  logins ON `sessions.id_login` = `logins.id_login`    WHERE  login= :login '  , $this->table);		
 	
+		return  $this->db->select($sql,['login' => $login], DBDriver::FETCH_ONE);
+	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное, передаем в третий параметр константу из класса DBDriver для выборки одной строки 
+	}
 }

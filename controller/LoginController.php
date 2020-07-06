@@ -10,8 +10,7 @@ class LoginController extends BaseController
 // сброс  предыдущего входа для новой авторизации, использовано при нажатии кнопки выход функцией notAuth(), для повторной авторизации.
 	$notAuth = Auth::notAuth();
 //парольный вход для пользователя
-	if(count($_POST) > 0) 
-	{
+	if(count($_POST) > 0) {
 		$_SESSION['name'] = $_POST['login'];
 // echo $_SESSION['name'] можно использовать на всех страницах сайта и обращаться к нему как к имени авторизованного пользователя
 		if($_POST['login'] == 'admin' && $_POST['password'] == 'admin')

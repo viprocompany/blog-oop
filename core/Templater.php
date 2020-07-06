@@ -7,6 +7,10 @@ use models\TextsModel;
 
 class Templater
 {
+  public function template($texts=[])
+  {
+    include_once __DIR__ . '/../views/main.html.php';  
+  }
 	public function statica()
 	{
  //создаем объект для подключения к базе данных
@@ -15,10 +19,17 @@ class Templater
   $mTexts = new TextsModel(new DBDriver($db), new Validator());
 //применяем к объекту метод из его класса и полученный массив будем добавлять в рендер страниц сайта
   $texts = $mTexts->getAll(' text_name ');
-		// $id работает только отдельно ,  
+   // var_dump($texts);
+  // self::template($texts);
+// die;
+ // return  $texts;
+
+ 
+// $id работает только отдельно ,  
   // $id = str_replace('$', '', 'text_name');
   //после вставки в array_column в значении  'text_name' не обрезает '$'
 	$texts = array_column($texts, 'text_content', (str_replace('$', '', 'text_name')));
+  // var_dump($texts);
 	 return $texts;
 
     // foreach ($texts as $text)

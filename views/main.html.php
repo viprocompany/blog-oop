@@ -13,17 +13,17 @@
 		<!--БЛОК ПРИВЕТСТВИЕ-->
 		<div class="row " >
 			<div class="col-12 border border rounded" id="hello">
-				<h1  style="font-weight:900;">PHP этап №1</h1>
+				<h1  style="font-weight:900;"><?php echo $title_1; ?>		</h1>
 			</div>
 		</div>
 		<!--БЛОК ХЕДЕР-->
 		<div class="row" id="header">
-			<img src="<?php echo ROOT?>assest/img/header.jpg" alt="" class="rounded img-fluid float-center img-big"> <!-- с закругленными углами  ,float-center выравнивание по центру-->
+			<img src="<?php echo ROOT?>assest/img/<?php echo $image_header; ?>" alt="" class="rounded img-fluid float-center img-big"> <!-- с закругленными углами  ,float-center выравнивание по центру-->
 		</div>
 		<!-- БЛОК ЛЕГЕНДА -->		
 		<div class="row border border rounded" id="legend">
 			<div class="col-12">
-				<?php echo $title_1; ?>			
+					<?php echo $title_2; ?><br>
 			</div>
 		</div>
 		<!--БЛОК КОНТЕНТ-->
@@ -32,19 +32,25 @@
 				<div class="col-6 col-md-2 order-md-1 border border-warning  rounded " id="sideLeft">
 					<div class="col-12">		
 						<div class="p-2 d-flex flex-column justify-content-center" id="info">   
-							<div class="" id="instagram"></div>
+							<div class="">
+									<img  id="instagram" src="<?php echo ROOT?>assest/img/<?php echo $instagram;?>" alt="<?php echo $instagram;?>" >
+							</div>
 							<div class="row" id="insta">
 								<p><a href="#">torgovy_object</a></p>
 							</div>
-							<div class="" id="vkontakte"></div>
+							<div class="" >
+									<img id="vkontakte" src="<?php echo ROOT?>assest/img/<?php echo $vk;?>" alt="<?php echo $vk;?>" >
+							</div>
 							<div class="row" id="vk">
 								<p><a href="#">torgovy_object</a></p>
 							</div> 
-							<div class="" id="facebook"></div>
+							<div class="" >
+									<img id="facebook" src="<?php echo ROOT?>assest/img/<?php echo $fb;?>" alt="<?php echo $fb;?>" >
+							</div>
 							<div class="row" id="face">
 								<p><a href="#">torgovy_object</a></p>
 							</div>
-									<img src="<?php echo ROOT?>assest/img/<?php echo $fb;?>" alt="<?php echo $fb;?>" >
+								
 							<!-- <?php echo $fb;?> -->
 						</div>	
 					</div>			
@@ -68,7 +74,7 @@
 					</p> -->
 				</div>
 				<div class="column">   
-					<?php echo $title_2; ?><br>
+				
 					<?php echo $error; ?>
 					<?php echo $new_row;?><hr>
 					<?php echo $content;?>
@@ -77,8 +83,8 @@
 				</div>
 		<!--ФУТЕР-->
 		<div class="row" id="footer">
-			<img src="<?php echo ROOT?>assest/img/footer.jpg" alt="" class="rounded img-fluid float-center img-big">
-			<img src="<?php echo ROOT?>assest/img/<?php echo $image_footer;?>" alt="" class="rounded img-fluid float-center">
+	<!-- 		<img src="<?php echo ROOT?>assest/img/footer.jpg" alt="" class="rounded img-fluid float-center img-big"> -->
+			<img src="<?php echo ROOT?>assest/img/<?php echo $image_footer;?>" alt="" class="rounded img-fluid float-center img-big">
 		</div>
 	<!--БЛОК АВТОР-->
 	<div class="row " id="copyright"></div>

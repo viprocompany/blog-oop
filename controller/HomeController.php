@@ -9,6 +9,7 @@ use models\UsersModel;
 use models\Helper;
 use core\DBConnect;
 use core\Auth;
+use core\Logins;
 use core\DBDriver;
 use core\Request;
 use core\Templater;
@@ -24,7 +25,7 @@ class HomeController extends BaseController
 // переопределяем title
 		$this->title .=': Главная страница';
 	    //вводим переменную $isAuth  что бы знать ее значение и какждый раз не делать вызов функции isAuth() 
-		$isAuth = Auth::isAuth();
+		$isAuth = Logins::isAuth();
 //имя пользователя для вывода в приветствии
 		$login = Auth::isName();
 		$msg = '';
