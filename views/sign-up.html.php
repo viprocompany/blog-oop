@@ -1,31 +1,29 @@
-РЕГИСТРАЦИЯ
+РЕГИСТРАЦИЯ 
 <hr>
-<form class="form" method="post">
+<form <?=$form->method();?> class="form sign-up">
+<!-- метод для вывода скрытого поля  с солью inputSign -->
+<?=$form->inputSign()?>
+<!-- метод для вывода инпутов -->
+<?php foreach($form->fields() as $field) : ?>
   <div class="line">
-    <label class="label">
-      <span class="title" for="name">Логин</span>
-      <input type="text" class="inp" name="login" placeholder="введите логин" value="<?php  echo $login; ?>"><br>
-    </label><br>
+   <label class="label">
+    <?=$field?>  
+    <br>
+    </label>
+    <br>
   </div>
-  <div class="line">
-    <label class="label">
-      <span class="title" for="password">Пароль</span>
-      <input type="password" class="inp" name="password" placeholder="введите пароль" value="">
-    </label><br>
-  </div>
-  <!-- <input type="checkbox" class="inp" name="remember" value="">
-	Запомнить меня<hr>	 -->
-
-  <input type="submit" class="btn btn-success inp" value="Войти">
+<?php endforeach; ?>
 </form>
-<!-- <span style='color: green;'><?php  echo $msg_2 ?></span><br/> -->
-  <div>
+
+<!-- //ЕСЛИ РАСКОМЕНТИРОВАТЬ УСЛОВИЕ С ВЫВОДОМ ОШИБКИ , ТО ОНИ БУДУТ РАСПЕЧАТАНЫ ПОД КНОПКОЙ "ЗАРЕГИСТРИРОВАТЬ"" -->
+<!-- 
+<div class="msg">
     <?php 
-    if($msg){
+    if($msg){     
       foreach ($msg  as $one_error) 
       {
         echo "<span style='color: red;'>$one_error</span><br/>";
       } 
     } 
     ?>
-  </div>
+  </div> -->

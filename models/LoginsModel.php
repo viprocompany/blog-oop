@@ -14,7 +14,7 @@ class LoginsModel extends BaseModel
 		],
 		'login' => [
 			'type' => 'string',
-			'length' => [3, 50],
+			'length' => [3, 30],
 			'not_blank' => true,
 			'require' => true,
 			'correct' => 'login'
@@ -25,6 +25,13 @@ class LoginsModel extends BaseModel
 			'require' => true,
 			'not_blank' => true				
 		]
+		// ,
+		// 		'password-reply' => [
+		// 	'type' => 'string',
+		// 	'length' => [5, 50],
+		// 	'require' => true,
+		// 	'not_blank' => true				
+		// ]
 	];
 
 public function __construct(DBDriver $db, Validator $validator)
@@ -73,6 +80,7 @@ public function __construct(DBDriver $db, Validator $validator)
 		return  $this->db->select($sql,['login' => $Login], DBDriver::FETCH_ONE);
 	//пишем $id как написано в передаче параметра, а не как будет отражено в запросе типа $id_article или другое подобное, передаем в третий параметр константу из класса DBDriver для выборки одной строки 
 	}
+	
 	public function getBySid( $sid )
 	{		
 		$sql = sprintf('SELECT `logins.id_login` as id_login, login  FROM  %s   JOIN sessions ON `sessions.id_login` = `logins.id_login`    WHERE  sid= :sid '  , $this->table);		

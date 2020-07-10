@@ -7,6 +7,7 @@ use core\Request;
 use core\Validator;
 use core\Exception\IncorrectDataException;
 
+
 //в классе собираем объект для регистрации и авторизации пользователя  используя модели пользователя LoginsModel и модель наших сессий SessionModel
  class Logins 
  {
@@ -89,46 +90,46 @@ use core\Exception\IncorrectDataException;
   			
   	}
   	return  $isAuth; 
-
-
   // public function isAuth(Request $request)
   // {
   // 	if ($this->current) {
   // 		return true;
   // 	}
-
   // 	if ($sid = $this->session->collection()->get('sid')) {
   // 		$this->current = $this->mUser->getBySid($sid);
   // 	}
-
   // 	if ($this->current) {
   // 		$this->mSession->update($sid);
   // 		return true;
   // 	}
-
   // 	if ($sid = $request->cookie()->get('sid')) {
   // 		$this->mSession->set($sid);
   // 		$this->session->collection()->set('sid', $sid);
   // 		return true;
   // 	}
-
   // 	return false;
   }
+
   public function signUp(array $fields)
   {
   //можно перехватиь ошибку валидации здесь, а  можно попробовать споймать ошибку в контроллере LoginsController, что и сделано в данном случае( try catch установлен в контроллере LoginsController)
 
-//можно сделать проверку на правильность повторно введенного пароля при регистрации , в случае если используем для пароля второе поле для дублирования ввода пароля
-    // if(!$this->comparePass($fields)){
-    //  return false;
-    // }
-
-//вызываем signUp и передаем туда  $fields - поля для логин, пароль , куки и др.
+// проверка на правильность повторно введенного пароля при регистрации , используем для пароля второе поле для дублирования ввода пароля
+  if (!$this->comparePass($fields)) {
+    $errors = [
+      'password' => 'Поля должны быть заполнены одинаково !',
+      'password-reply' =>  'Поля должны быть заполнены одинаково!'
+    ];
+    throw new IncorrectDataException($errors);  
+    // throw new IncorrectDataException('Поля не совпадают!');  
+    $e->getErrors();
+  }
+//вызываем signUp и передаем туда  $fields - поля для логин, пароль, куки  и др. Здесь придут только те поля, которые переданы  сформой, а не все которые были переданы в массиве пост.
     $this->mLogins->signUp($fields);
   }
 
   private function comparePass($fields)
   {
-    // сделать сравнение на правильность пароля при повторном вводе
+    return $fields['password'] === $fields['password-reply'];
   }
  }

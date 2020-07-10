@@ -219,7 +219,7 @@ div#sideRight , p span.answer {
 }
 
 .title{
-  margin: 5px 0;
+  margin: 15px 0;
   flex-basis: 100px;
 /*flex-basis это базовый размер элемента*/
   cursor: pointer;
@@ -269,3 +269,12 @@ div#sideRight , p span.answer {
 margin: 20px;
 width: 200px;
 }
+
+.error {
+  border: 3px solid red;
+}
+ 
+ .msg{
+  margin: -7px auto;
+  
+ }

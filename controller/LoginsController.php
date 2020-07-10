@@ -9,6 +9,9 @@ use core\Auth;
 use core\Request;
 use core\DBDriver;
 use core\Logins;
+use core\Forms\FormBuilder;
+use core\Forms\Form;
+use forms\SignUp;
 use models\Helper;
 use core\Validator;
 use core\Exception\IncorrectDataException;
@@ -47,30 +50,7 @@ class LoginsController extends BaseController
 //создаем объект класса logins , и добавляем туда объект mLogins используя модель класса  LoginsModel и объект mSession через подключение модели класса SessionModel
 			$user = new logins($mLogins, $mSession);		
 //берем массив данных из формы и забрасываем их в метод signIn класса Logins одноименного файла для валидации запорлнения полей формы по количеству знаков  и правильности введенных туда пар  пароля и логина пользователя. сравнение введенных в форму полей производится с данными из базы. В случае  удачного сравнения происходит авторизация , а при нажатиии на форме галочки  ЗАПОМНИТЬ вешаются куки для логина и пароля
-				
-				$user->signIn($this->request->post());	
-
-//после того как данные валидированы  переходим к авторизации	
-//проверояем есть ли такой логин в базе
-				// if (($mLogins->correctOrigin('id_login', 'logins', 'login', $login))) {
-				// 	$msg = ['Нет такого пользователя!'];
-				// }
-//сравниваем введенный пароль и тот, который есть в базе
-				// if (!($password == $password_match)) {
-				// 	$msg = ['Неправильный пароль!' ];			
-				// }
-				// else
-				// {
-// //задаем значение авторизации как действительное
-// 					$_SESSION['is_auth'] = true;
-
-// // при выставлении галочки "запомнить" 
-// 					$remember = 	$this->request->post('remember');
-// 					if(isset($remember)  ?? true){
-// 				//при удачной авторизации задаем куку с логином пользователя
-// 						setcookie('login',$login, time()+3600*24*365 , '/');
-// 						setcookie('password', LoginsModel::getHash($password), time()+3600*24*365 , '/');					
-// 					}
+			$user->signIn($this->request->post());	
 
 //!!!!!!!!ПЕРЕДАЧА ИНФОРМАЦИИ С ОДНОЙ СТРАНИЦЫ НА ДРУГУЮ ЧЕРЕЗ СЕССИЮ : элемент $_SESSION['returnUrl'] указывающий куда пойдет клиент  после авторизации в файле login.php. НАПРИМЕР: если файл login.php открылся после клика по edit(изменению)  то клиент пойдет на edit.php выбранной статьи, так как на edit.php элемент задан как $_SESSION['returnUrl'] = 'edit.php?fname=$fname' .  соответственно добавление  и так далее !!!!!
 					if(isset($_SESSION['returnUrl']))
@@ -94,7 +74,6 @@ class LoginsController extends BaseController
 					//приводим строку к массиву а разбиением строки на элементы массива будет любая хрень типа some, которой нет в этой строке ,для того чтобы массив состоял из той целой и неразбитой строки ,что придет с ошибкой throw из метода signIn  файла Logins.php 
 					$msg = explode("some", $e->getErrors());				
 				}	
-
 			}		
 		}	
 
@@ -111,6 +90,13 @@ class LoginsController extends BaseController
 	{
 // переопределяем title
 		$this->title .=': РЕГИСТРАЦИЯ';
+		$msg = [];	
+
+		//создаем объект класса SignUp формы для регистрации пользователей 
+		$form = new SignUp();
+		//создаем объект класса Formbuilder для отображения формы регистрации и передаем  туда нашу фому
+		$formBuilder = new Formbuilder($form);
+
 
 		if($this->request->isPost()){
 //для вызова при наличии данных в форме методом POST
@@ -119,7 +105,9 @@ class LoginsController extends BaseController
 //создаем новый объект класса LoginsModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
 			$mLogins = new LoginsModel(new DBDriver($db),new Validator()
 		);
-			$msg = [];		
+//создаем новый объект класса SessionModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
+			$mSession = new SessionModel(new DBDriver($db),new Validator());
+
 // проверка названия на незанятость вводимого названия 
 			$login = trim($_POST['login']);
 // $password = trim($_POST['password']);	
@@ -128,22 +116,32 @@ class LoginsController extends BaseController
 			}
 			else{
 //создаем объект класса logins , используя модель подключения к базе данных через LoginsModel
-				$logins = new logins($mLogins); 
+				$user = new logins($mLogins, $mSession); 
 //ловим ошибку валидации брошенную в методе signUp класса LoginsModel
 				try{
-					$logins->signUp($this->request->post());	
+					$user->signUp($form->handleRequest($this->request));	
 //после того как данные валидированы и помещены в базу данных переходим на страницу авторизации
 					header("Location: " . ROOT . "home");
 					exit();
 				} catch (IncorrectDataException $e) {
-					$msg = ($e->getErrors());
+					
+					$form->addErrors($e->getErrors());
+
+					if(is_array($e->getErrors())){				
+						$msg = $e->getErrors();	
+					}			
+					else{
+						//приводим строку к массиву а разбиением строки на элементы массива будет любая хрень типа some, которой нет в этой строке ,для того чтобы массив состоял из той целой и неразбитой строки ,что придет с ошибкой throw из метода signIn  файла Logins.php 
+						$msg = explode("some", $e->getErrors());				
+					}	
 				}
 			}
 		}
+		//передаем в HTML файл sign-up разметку сгенерированную классом FormBuilder в виде экземпляра этого класса $formBuilder с  переданной формой из полей класса signUp в переменную $form и маасивом ошибок в переменную $msg
 		$this->content = $this->build('sign-up', [
+			'form'=>$formBuilder,
 			'msg'=>$msg,
 			'login'=>$login
-// ,'password'=>$password
 		]);
 	}
 }

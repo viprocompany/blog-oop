@@ -8,8 +8,8 @@ use models\CategoriesModel;
 use models\UsersModel;
 use models\Helper;
 use core\DBConnect;
-use core\Auth;
 use core\Logins;
+use core\Auth;
 use core\DBDriver;
 use core\Request;
 use core\Templater;
@@ -163,7 +163,7 @@ class HomeController extends BaseController
 
 //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
-// $dir_img =  'f:/OpenServer/OSPanel/domains/blog/images';
+// $dir_img =  'f:/OpenServer/OSPanel/domains/blog-oop/images';
 		$dir_img =  'd:/open-server/OSPanel/domains/blog-oop/images';
 		$img_files = scandir($dir_img);
 //создаем пустой массив для картинок
@@ -289,7 +289,7 @@ class HomeController extends BaseController
 	$categories = $mCategory->getAll('title_category ASC');
     //создаем массив сканирую директорию img
 // $dir_img = $_SERVER['DOCUMENT_ROOT'] . 'assest/img';
-// $dir_img =  'f:/OpenServer/OSPanel/domains/blog/images';
+// $dir_img =  'f:/OpenServer/OSPanel/domains/blog-oop/images';
 	$dir_img =  'd:/open-server/OSPanel/domains/blog-oop/images';
 
 	$img_files = scandir($dir_img);
