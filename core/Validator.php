@@ -184,7 +184,7 @@ class Validator
 
 			// 				 //проверки количества вводимых символов
 			if (isset($rules['length']) && !$this->isLengthMatch($fields[$name], $rules['length'])) {
-				$this->errors[$name] = sprintf('Поле %s должно иметь корректное количество знаков!', $name);
+				$this->errors[$name] = sprintf('В поле %s введите корректное количество знаков!', $name);
 			}	 
 //проверка поля на пустоту с применением функции isBlank
 			if (isset($rules['not_blank']) && $this-> isBlank($fields[$name])) {

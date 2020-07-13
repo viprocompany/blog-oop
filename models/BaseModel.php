@@ -46,18 +46,27 @@ abstract class BaseModel
 
 	public function add(array $params, $needValidation = true)
 	{		
+
 		// $needValidation флаг валидации , по умолчанию true, поэтому все делаем дальше 
 		if($needValidation){
-					//обращаемся к валидатору через функцию его класса  execute, которая проверяет соответствие полей заданной СХЕМЕ
+//обращаемся к валидатору через функцию его класса  execute, которая проверяет соответствие полей заданной СХЕМЕ
 			$this->validator->execute($params);
+
 //если валидация прошла неуспешно выводим ошибку 
 			if (!$this->validator->success) {
 			// бросаем ошибку с полученным массивом errors   из метода execute класса Validator, далее она летит в контроллер индексного файла
 				throw new IncorrectDataException($this->validator->errors);
 				$this->validator->errors;
 			}
-//при успешной валидации
-			$params = $this->validator->clean;
+
+//при успешной валидации создаем массив из благополучно проверенных полей(проверяет ВСЕ поля формы , а не только те , которые переданфы в параметре данного метода add). Не подходит для регистрации пользователя так как пытается добавить в метод insert поле для повторной проверки на одинаковость пароля password-reply
+			//ПОЭТОМУ ПОКА ОТКЛЮЧЕНО
+			// $params = $this->validator->clean;
+
+		// echo 'BaseModel line 61  методе add получаем данные из модели LoginsModel и отправляем в драйвеp в метод insert: ';
+		// var_dump($params);
+		// die;
+
 		}
 
 // если  needValidation имеет флаг FALSE данные без валидации отпправляем в insert. Используем при вводе данных пароля с хеш

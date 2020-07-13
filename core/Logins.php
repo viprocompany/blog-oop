@@ -3,7 +3,9 @@ namespace core;
  
 use models\LoginsModel;
 use models\SessionModel;
+use core\DBConnect;
 use core\Request;
+use core\DBDriver;
 use core\Validator;
 use core\Exception\IncorrectDataException;
 
@@ -114,6 +116,24 @@ use core\Exception\IncorrectDataException;
   {
   //можно перехватиь ошибку валидации здесь, а  можно попробовать споймать ошибку в контроллере LoginsController, что и сделано в данном случае( try catch установлен в контроллере LoginsController)
 
+//для вызова при наличии данных в форме методом POST
+	//создаем объект для подключения к базе данных
+			$db = DBConnect::getPDO();
+//создаем новый объект класса LoginsModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
+			$mLogins = new LoginsModel(new DBDriver($db),new Validator()
+		);
+
+			// проверка названия на незанятость вводимого названия 
+			$login = trim($_POST['login']);
+			
+// $password = trim($_POST['password']);	
+			if (!($mLogins->correctOrigin('id_login', 'logins', 'login', $login))) {
+					// бросаем ошибку с полученным массивом errors   из метода execute класса Validator, далее она летит в контроллер индексного файла 
+				$errors = ['login' =>'Логин занят, придумайте пожалуйста другой!'];
+				
+				throw new IncorrectDataException($errors);
+				
+			}
 // проверка на правильность повторно введенного пароля при регистрации , используем для пароля второе поле для дублирования ввода пароля
   if (!$this->comparePass($fields)) {
     $errors = [

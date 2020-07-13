@@ -226,7 +226,7 @@ div#sideRight , p span.answer {
 }
 
 .inp{
-  /*flex-grow этожадность, растянется на все свободное
+  /*flex-grow это жадность, растянется на все свободное
    пространство в своем блоке, в данном
     случае до 500рх*/
   flex-grow: 1;
@@ -235,6 +235,17 @@ div#sideRight , p span.answer {
   padding: 5px;
   box-sizing: none;
 
+}
+.msg{
+  color: red;
+  margin: -5px 0 -22px 0px;
+  font-size: 18px;
+  text-align: right;
+/*  align-self: stretch;
+  text-align: justify;
+  text-align: left;*/
+ 
+  /*justify-content: flex-start;*/
 }
 .btn-success{
   width: 100%;
@@ -247,10 +258,7 @@ div#sideRight , p span.answer {
   color: #fff;
   font-size: 18px;
 }
-.msg{
-  color: red;
-  font-size: 18px;
-}
+
 .btn-menu, .btn-add {
   text-align: center;
   margin: 5px 20px ;
@@ -271,10 +279,5 @@ width: 200px;
 }
 
 .error {
-  border: 3px solid red;
+  border: 2px solid red;
 }
- 
- .msg{
-  margin: -7px auto;
-  
- }

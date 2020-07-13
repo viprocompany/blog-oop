@@ -108,17 +108,13 @@ class LoginsController extends BaseController
 //создаем новый объект класса SessionModel и через конструктор добавляем к нему передачей через параметр ранее созданный  объект  $db для подключения к базе данных
 			$mSession = new SessionModel(new DBDriver($db),new Validator());
 
-// проверка названия на незанятость вводимого названия 
-			$login = trim($_POST['login']);
-// $password = trim($_POST['password']);	
-			if (!($mLogins->correctOrigin('id_login', 'logins', 'login', $login))) {
-				$msg = ['Логин занят!'];
-			}
-			else{
+
+
 //создаем объект класса logins , используя модель подключения к базе данных через LoginsModel
 				$user = new logins($mLogins, $mSession); 
 //ловим ошибку валидации брошенную в методе signUp класса LoginsModel
 				try{
+// проверка названия на незанятость вводимого названия и валидация полей идет с методе signUp
 					$user->signUp($form->handleRequest($this->request));	
 //после того как данные валидированы и помещены в базу данных переходим на страницу авторизации
 					header("Location: " . ROOT . "home");
@@ -135,7 +131,7 @@ class LoginsController extends BaseController
 						$msg = explode("some", $e->getErrors());				
 					}	
 				}
-			}
+			// }
 		}
 		//передаем в HTML файл sign-up разметку сгенерированную классом FormBuilder в виде экземпляра этого класса $formBuilder с  переданной формой из полей класса signUp в переменную $form и маасивом ошибок в переменную $msg
 		$this->content = $this->build('sign-up', [

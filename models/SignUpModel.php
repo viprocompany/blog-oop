@@ -1,11 +1,13 @@
 <?php
 namespace models;
+ 
+ ///НЕ ПОНАДОБИДСЯ ЭТОТ КЛАСС !
 
 use core\DBDriver;
 use core\Validator;
 use core\Exception\IncorrectDataException;
 
-class LoginsModel extends BaseModel
+class SignUpModel extends BaseModel
 {
 	protected $validator;
 	protected $schema = [
@@ -19,7 +21,7 @@ class LoginsModel extends BaseModel
 			'require' => true,
 			'correct' => 'login'
 		],
-			'password' => [
+		'password' => [
 			'type' => 'string',
 			'length' => [5, 50],
 			'require' => true,
@@ -29,7 +31,7 @@ class LoginsModel extends BaseModel
 			'password-reply' => [
 			'type' => 'string',
 			'length' => [5, 50],
-			// 'require' => true,
+			'require' => true,
 			'not_blank' => true				
 		]
 	];
@@ -52,20 +54,20 @@ public function __construct(DBDriver $db, Validator $validator)
 			'login'=> $this->validator->clean['login'],
 			'password'=> $this->getHash($this->validator->clean['password'])
 		]);	
-			
+			// var_dump($this->validator->clean);
 	}
 
 
-	public function  signIn(array $fields)	
-	{
-//валидируем 
-		$this->validator->execute($fields);
-		if(!$this->validator->success){
-		// бросаем ошибку с полученным массивом errors   из метода execute класса Validator, далее она летит в контроллер индексного файла
-			throw new IncorrectDataException($this->validator->errors);
-		}
+// 	public function  signIn(array $fields)	
+// 	{
+// //валидируем 
+// 		$this->validator->execute($fields);
+// 		if(!$this->validator->success){
+// 		// бросаем ошибку с полученным массивом errors   из метода execute класса Validator, далее она летит в контроллер индексного файла
+// 			throw new IncorrectDataException($this->validator->errors);
+// 		}
+// 	}
 
-	}
 	//функция хеширования пароля пользователя при передаче в базу данных с помощью функции add 
 	// 777 - это соль
 	public function getHash($password)
@@ -73,6 +75,7 @@ public function __construct(DBDriver $db, Validator $validator)
 		return md5($password . '777');
 	}
 	
+
 	public function getByLogin( $Login )
 	{		
 		$sql = sprintf('SELECT * FROM  %s  WHERE  %s= :login '  , $this->table, $this->id_param);		
